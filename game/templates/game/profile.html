@@ -6,14 +6,21 @@
 </head>
 <body>
     <h2>Profile Settings</h2>
+    
+    <img src="{{ user.profile.avatar.url }}" alt="Profile Picture" width="100" style="border-radius: 50%;">
+    
     <p>Welcome, <strong>{{ user.username }}</strong>!</p>
 
     <hr>
 
-    <h3>Update Username</h3>
-    <form method="POST">
+    <h3>Update Profile</h3>
+    
+    <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
-        {{ form.as_p }}
+        
+        {{ u_form.as_p }}
+        {{ p_form.as_p }}
+        
         <button type="submit" name="update_profile">Save Changes</button>
     </form>
 
@@ -30,6 +37,7 @@
     </form>
 
     <br>
+    
     <form method="POST" action="{% url 'logout' %}">
         {% csrf_token %}
         <button type="submit">Logout</button>
