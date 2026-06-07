@@ -216,3 +216,10 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Ignore user-uploaded media files
+media/
+profile_avatars/
+
+# EXCEPT for our required default image
+!media/default_pfp.png

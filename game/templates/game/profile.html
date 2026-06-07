@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Profile Settings - Letterboxdle</title>
+</head>
+<body>
+    <h2>Profile Settings</h2>
+    
+    <img src="{{ user.profile.avatar.url }}" alt="Profile Picture" width="100" style="border-radius: 50%;">
+    
+    <p>Welcome, <strong>{{ user.username }}</strong>!</p>
+
+    <hr>
+
+    <h3>Update Profile</h3>
+    
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        {{ u_form.as_p }}
+        {{ p_form.as_p }}
+        
+        <button type="submit" name="update_profile">Save Changes</button>
+    </form>
+
+    <hr>
+
+    <h3>Danger Zone</h3>
+    <p>Deleting your account is permanent. Your high scores and streak history will be wiped.</p>
+    
+    <form method="POST">
+        {% csrf_token %}
+        <button type="submit" name="delete_account" style="color: red; font-weight: bold;">
+            Delete My Account
+        </button>
+    </form>
+
+    <br>
+    
+    <form method="POST" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit">Logout</button>
+    </form>
+
+</body>
+</html>

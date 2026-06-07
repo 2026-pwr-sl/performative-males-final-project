@@ -20,6 +20,8 @@ class Profile(models.Model):
 
     user = models.OneToOneField(User, on_delete=models.CASCADE) # im using the djangos built in authentication User
 
+    avatar = models.ImageField(default='default_pfp.png', upload_to='profile_avatrs')
+
     high_score = models.BigIntegerField(default=0)
     games_played = models.IntegerField(default=0)
 
