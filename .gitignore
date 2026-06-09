@@ -221,5 +221,8 @@ __marimo__/
 media/
 profile_avatars/
 
+# Ignore raw Kaggle files
+*.csv
+
 # EXCEPT for our required default image
 !media/default_pfp.png
