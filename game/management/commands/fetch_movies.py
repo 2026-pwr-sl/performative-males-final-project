@@ -97,7 +97,7 @@ class Command(BaseCommand):
 
             words_to_censor = load_json_data(
                 os.path.join(settings.BASE_DIR,
-                             'media\\censor_data.json')
+                             'game\\censor_data.json')
             )
 
             for row in reader:
