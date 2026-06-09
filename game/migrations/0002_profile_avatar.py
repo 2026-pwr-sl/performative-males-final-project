@@ -4,15 +4,16 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('game', '0001_initial'),
+        ("game", "0001_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='profile',
-            name='avatar',
-            field=models.ImageField(default='default_pfp.png', upload_to='profile_avatrs'),
+            model_name="profile",
+            name="avatar",
+            field=models.ImageField(
+                default="default_pfp.png", upload_to="profile_avatrs"
+            ),
         ),
     ]
