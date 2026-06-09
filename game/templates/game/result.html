@@ -1,0 +1,15 @@
+<h1>Round result</h1>
+
+{% if correct %}
+<h2 class="correct">Correct!</h2>
+{% else %}
+<h2 class="wrong">Wrong!</h2>
+<p>Your answer: {{ guess }}</p>
+{% endif %}
+
+<p>Correct movie was: <b>{{ movie }}</b></p>
+
+<form method="post">
+  {% csrf_token %}
+  <button type="submit">Next</button>
+</form>

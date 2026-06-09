@@ -1,6 +1,7 @@
 import csv
 import os
 import re
+import json
 from django.core.management.base import BaseCommand
 from game.models import Movie
 from django.conf import settings
@@ -9,6 +10,46 @@ from django.conf import settings
 def normalize_title(title):
     # Usuwa wszystko co nie jest literą lub cyfrą (spacje, myślniki, dwukropki)
     return re.sub(r'[^a-z0-9]', '', str(title).lower())
+
+
+def load_json_data(file_path):
+    try:
+        with open(file_path, "r", encoding="utf-8") as file:
+            data = json.load(file)
+            return data.get("words", [])
+    except FileNotFoundError:
+        print(f"Error: File not found at {file_path}")
+        return []
+    except json.JSONDecodeError:
+        print("Error: Invalid JSON format.")
+        return []
+
+
+def censor_review(review, title, words_to_censor=None):
+    title_pattern = re.escape(title)
+    censored_review = re.sub(
+        title_pattern,
+        "[MOVIE TITLE]",
+        review,
+        flags=re.IGNORECASE
+        )
+
+    # censor words from list
+    if words_to_censor:
+        joined_words = "|".join([re.escape(w) for w in words_to_censor])
+        words_pattern = rf"({joined_words})"
+
+        def replace_with_stars(match):
+            return "*" * len(match.group(0))
+
+        censored_review = re.sub(
+            words_pattern,
+            replace_with_stars,
+            censored_review,
+            flags=re.IGNORECASE
+        )
+
+    return censored_review
 
 
 class Command(BaseCommand):
@@ -51,6 +92,14 @@ class Command(BaseCommand):
 
         with open(reviews_csv_path, mode='r', encoding='utf-8') as f:
             reader = csv.DictReader(f)
+
+            # words to censor in reviews
+
+            words_to_censor = load_json_data(
+                os.path.join(settings.BASE_DIR,
+                             'game\\censor_data.json')
+            )
+
             for row in reader:
                 movie_ref = row['Movie']
                 norm_title = normalize_title(movie_ref)
@@ -79,11 +128,23 @@ class Command(BaseCommand):
                     # Przypisywanie recenzji na podstawie gwiazdek
                     entry = movies_to_create[norm_title]
                     if stars <= 2 and not entry['rev1']:
-                        entry['rev1'] = review_text
+                        entry['rev1'] = censor_review(
+                            review_text,
+                            movies_info[norm_title]['real_title'],
+                            words_to_censor
+                            )
                     elif stars == 3 and not entry['rev3']:
-                        entry['rev3'] = review_text
+                        entry['rev3'] = censor_review(
+                            review_text,
+                            movies_info[norm_title]['real_title'],
+                            words_to_censor
+                            )
                     elif stars >= 4 and not entry['rev5']:
-                        entry['rev5'] = review_text
+                        entry['rev5'] = censor_review(
+                            review_text,
+                            movies_info[norm_title]['real_title'],
+                            words_to_censor
+                            )
 
         self.stdout.write("4. Saving to database")
         saved_count = 0

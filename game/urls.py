@@ -18,4 +18,6 @@ urlpatterns = [
     ),
     path("profile/", views.profile_settings, name="profile"),
     path("", views.register, name="home"),
+    path("game/", views.game, name="game"),
+    path("result/", views.result, name="result"),
 ]
