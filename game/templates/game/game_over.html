@@ -1,0 +1,7 @@
+<h1>Game Over</h1>
+
+<p>Your score: <b>{{ score }}</b> / 10</p>
+
+<form method="get" action="{% url 'game' %}">
+  <button type="submit">Play again</button>
+</form>

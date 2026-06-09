@@ -11,6 +11,11 @@ def normalize_title(title):
     return re.sub(r'[^a-z0-9]', '', str(title).lower())
 
 
+def censor_review(review, title):
+    pattern = r"\b" + re.escape(title) + r"\b"
+    return re.sub(pattern, "[MOVIE TITLE]", review, flags=re.IGNORECASE)
+
+
 class Command(BaseCommand):
     help = "fetch movie titles with posters and reviews."
 
@@ -79,11 +84,17 @@ class Command(BaseCommand):
                     # Przypisywanie recenzji na podstawie gwiazdek
                     entry = movies_to_create[norm_title]
                     if stars <= 2 and not entry['rev1']:
-                        entry['rev1'] = review_text
+                        entry['rev1'] = censor_review(
+                            review_text, movies_info[norm_title]['real_title']
+                            )
                     elif stars == 3 and not entry['rev3']:
-                        entry['rev3'] = review_text
+                        entry['rev3'] = censor_review(
+                            review_text, movies_info[norm_title]['real_title']
+                            )
                     elif stars >= 4 and not entry['rev5']:
-                        entry['rev5'] = review_text
+                        entry['rev5'] = censor_review(
+                            review_text, movies_info[norm_title]['real_title']
+                            )
 
         self.stdout.write("4. Saving to database")
         saved_count = 0
