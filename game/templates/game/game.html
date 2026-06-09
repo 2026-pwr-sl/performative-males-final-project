@@ -1,19 +1,17 @@
 <h1>Movie {{ round }}/10</h1>
 
-<img
-  src="{{ movie.poster_url }}"
-  width="300"
-  height="450"
-  alt="movie poster"
-  onerror="
-    this.style.display = 'none';
-    document.getElementById('poster-error').style.display = 'block';
-  "
-/>
-
-<p id="poster-error" style="display: none; color: red">
-  An error occured while downloading the poster
-</p>
+<div class="poster-wrapper">
+  {% if movie.poster_url %}
+  <img
+    src="{{ movie.poster_url }}"
+    width="300"
+    height="450"
+    alt="movie poster"
+  />
+  {% else %}
+  <div class="poster-error">An error occured: no poster available!</div>
+  {% endif %}
+</div>
 
 <p>{{ movie.review_5 }}</p>
 
