@@ -2,12 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="description" content="Create a new Letterboxdle account">
+    <meta name="keywords" content="register, signup, letterboxdle, game">
     <title>Register - Letterboxdle</title>
 </head>
 <body>
     <h2>Create an Account</h2>
     
-    <form method="POST">
+    <form method="post">
         {% csrf_token %}
         
         {{ form.as_p }}
