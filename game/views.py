@@ -126,20 +126,19 @@ def result(request):
         request.session.pop("last_guess", None)
         request.session.pop("last_correct", None)
 
+        movie_ids = request.session.get("movie_ids", [])
+        round_index = request.session.get("round", 0)
+
+        if round_index >= len(movie_ids):
+            score = request.session.get("score", 0)
+
+            request.session.flush()
+
+            return render(request, "game/game_over.html", {
+                "score": score
+            })
+
         return redirect("game")
-
-    movie_ids = request.session.get("movie_ids", [])
-    round_index = request.session.get("round", 0)
-
-    if round_index >= len(movie_ids):
-        score = request.session.get("score", 0)
-
-        # ważne: czyścimy grę
-        request.session.flush()
-
-        return render(request, "game/game_over.html", {
-            "score": score
-        })
 
     return render(request, "game/result.html", {
         "movie": request.session["last_movie"],
