@@ -13,11 +13,21 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='movie',
             name='id',
-            field=models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID'),
+            field=models.BigAutoField(
+                auto_created=True,
+                primary_key=True,
+                serialize=False,
+                verbose_name='ID'
+            ),
         ),
         migrations.AlterField(
             model_name='profile',
             name='id',
-            field=models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID'),
+            field=models.BigAutoField(
+                auto_created=True,
+                primary_key=True,
+                serialize=False,
+                verbose_name='ID'
+            ),
         ),
     ]

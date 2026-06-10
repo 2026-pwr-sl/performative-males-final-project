@@ -64,7 +64,7 @@ def game(request):
         request.session["prev_result"] = None
         request.session["prev_movie"] = None
 
-        #total time left
+        # total time left
         request.session["time_remaining"] = 30
 
     movie_ids = request.session["movie_ids"]
@@ -85,8 +85,8 @@ def game(request):
     if request.method == "POST":
         guess = request.POST.get("guess", "").strip()
 
-        #update time left
-        time_left = int(request.POST.get("time_remaining",0))
+        # update time left
+        time_left = int(request.POST.get("time_remaining", 0))
         request.session["time_remaining"] = time_left
 
         # handle previous guess feedback
@@ -102,7 +102,6 @@ def game(request):
             request.session["attempt"] = 1
 
             request.session["time_remaining"] = 30
-
 
             return redirect("result")
 
