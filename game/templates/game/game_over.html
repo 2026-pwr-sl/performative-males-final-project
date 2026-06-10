@@ -1,6 +1,32 @@
 <h1>Game Over</h1>
 
-<p>Your score: <strong>{{ score }}</strong> / 10</p>
+<p>Your score: <strong>{{ score }}</strong> / 150</p>
+
+<p>
+  Your rating:
+  <span id="star-container"></span>
+</p>
+
+<script>
+  const score = Number("{{ score }}") || 0;
+  const starsAmount = Math.max(0.5, Math.ceil(score / 15) / 2);
+
+  const container = document.getElementById("star-container");
+  let starHtml = "";
+
+  // generating stars
+  for (let i = 1; i <= 5; i++) {
+    if (starsAmount >= i) {
+      starHtml += "<span>★</span>";
+    } else if (starsAmount + 0.5 === i) {
+      starHtml += "<span>⯪</span>";
+    } else {
+      starHtml += "<span>☆</span>";
+    }
+  }
+
+  container.innerHTML = `${starHtml} <strong>(${starsAmount.toFixed(1)})</strong>`;
+</script>
 
 <form method="get" action="{% url 'game' %}">
   <button type="submit">Play again</button>

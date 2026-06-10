@@ -13,8 +13,8 @@ def get_blurred_poster(image_url, filter_level=3, filter_type='blur'):
     caches it locally, and returns the media URL.
     """
 
-    blur_strength_coefficient = 3
-    min_pixel_scale = 0.25
+    blur_strength_coefficient = 5   # originally 3
+    min_pixel_scale = 0.1   # originally 0.25
 
     # Safety check
     if not image_url:
