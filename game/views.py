@@ -1,4 +1,4 @@
-from random import sample
+from random import sample, choice
 
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm
@@ -61,7 +61,10 @@ def game(request):
             )
 
         # starting state for the game
-        request.session["movie_ids"] = sample(movies, min(10, len(movies)))
+        selected_movies = sample(movies, min(10, len(movies)))
+        request.session["movie_ids"] = selected_movies
+        request.session["filter_styles"] = [
+            choice(['blur', 'pixel'])for _ in range(len(selected_movies))]
         request.session["round"] = 0
         request.session["attempt"] = 1
         request.session["score"] = 0
@@ -113,11 +116,15 @@ def game(request):
 
         return redirect("game")
 
-    # Blur the poster
+    # Apply filter to the poster
     current_attempt = request.session["attempt"]
-    # Blur levels: 0-none, 1-low, 2-medium, 3-high
-    blur_level = 3 - (current_attempt - 1)  # we have 3 attemps max
-    blurred_image_url = get_blurred_poster(movie.poster_url, blur_level)
+    # Filter levels: 0-none, 1-low, 2-medium, 3-high
+    # Filter types: 'blur', 'pixel'
+    filter_level = 3 - (current_attempt - 1)  # we have 3 attemps max
+    filter_styles = request.session.get("filter_styles", [])
+    filter_type = filter_styles[round_idx]
+    blurred_image_url = get_blurred_poster(movie.poster_url, filter_level,
+                                           filter_type=filter_type)
 
     return render(request, "game/game.html", {
         "movie": movie,
