@@ -101,13 +101,26 @@ def game(request):
         # handle previous guess feedback
         correct = guess.lower() == movie.title.lower()
 
+        request.session["gained_score"] = 0
         request.session["last_correct"] = correct
         request.session["last_movie"] = movie.title
         request.session["last_guess"] = guess
         request.session["last_poster"] = movie.poster_url
 
         if correct:
-            request.session["score"] += 1
+            # SCORING SYSTEM RULES
+            # MAX SCORE PER ROUND: 15 points
+            # 1st attempt: 10 points
+            # 2nd attempt: 6 points
+            # 3rd attempt: 2 points
+            # TIME BONUS
+            # 1 point for every 5 seconds remaining (max 6 points)
+            gained_score = 10 - (request.session["attempt"] - 1) * 4
+            gained_score += min(6, time_left // 5)
+
+            request.session["gained_score"] = gained_score
+
+            request.session["score"] += request.session["gained_score"]
             request.session["round"] += 1
             request.session["attempt"] = 1
 
@@ -180,4 +193,5 @@ def result(request):
         "guess": request.session["last_guess"],
         "correct": request.session["last_correct"],
         "poster_url": request.session.get("last_poster"),
+        "gained_score": request.session.get("gained_score", 0)
     })

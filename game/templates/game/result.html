@@ -1,16 +1,7 @@
 <h1>Round result</h1>
 
 <div class="poster-wrapper">
-  {% if poster_url %}
-  <img
-    src="{{ poster_url }}"
-    width="300"
-    height="450"
-    alt="movie poster"
-  />
-  {% else %}
-  <div class="poster-error">An error occured: no poster available!</div>
-  {% endif %}
+  <img src="{{ poster_url }}" width="300" height="450" alt="movie poster" />
 </div>
 
 {% if correct %}
@@ -21,6 +12,8 @@
 {% endif %}
 
 <p>Correct movie was: <b>{{ movie }}</b></p>
+
+<p>Your score for this round: <strong>{{ gained_score }}</strong> / 15</p>
 
 <form method="post">
   {% csrf_token %}
