@@ -73,6 +73,9 @@ def game(request):
         request.session["prev_result"] = None
         request.session["prev_movie"] = None
 
+        # total time left
+        request.session["time_remaining"] = 30
+
     movie_ids = request.session["movie_ids"]
     round_idx = request.session["round"]
 
@@ -91,6 +94,10 @@ def game(request):
     if request.method == "POST":
         guess = request.POST.get("guess", "").strip()
 
+        # update time left
+        time_left = int(request.POST.get("time_remaining", 0))
+        request.session["time_remaining"] = time_left
+
         # handle previous guess feedback
         correct = guess.lower() == movie.title.lower()
 
@@ -104,14 +111,19 @@ def game(request):
             request.session["round"] += 1
             request.session["attempt"] = 1
 
+            request.session["time_remaining"] = 30
+
             return redirect("result")
 
         else:
             request.session["attempt"] += 1
 
-            if request.session["attempt"] > 3:
+            if request.session["attempt"] > 3 or time_left <= 0:
                 request.session["round"] += 1
                 request.session["attempt"] = 1
+
+                request.session["time_remaining"] = 30
+
                 return redirect("result")
 
         return redirect("game")
@@ -131,6 +143,7 @@ def game(request):
         "round": round_idx + 1,
         "attempt": request.session["attempt"],
         "score": request.session["score"],
+        "time_remaining": request.session.get("time_remaining", 30),
         "poster_url": blurred_image_url
         })
 
