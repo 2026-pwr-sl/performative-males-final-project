@@ -56,7 +56,9 @@ def game(request):
         # movies = list(Movie.objects.values_list("id", flat=True))
 
         # Excluded movies without poster
-        movies = list(Movie.objects.exclude(poster_url='').values_list("id", flat=True))
+        movies = list(
+            Movie.objects.exclude(poster_url='').values_list("id", flat=True)
+            )
 
         # starting state for the game
         request.session["movie_ids"] = sample(movies, min(10, len(movies)))

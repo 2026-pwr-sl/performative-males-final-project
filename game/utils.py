@@ -40,7 +40,8 @@ def get_blurred_poster(image_url, blur_level=3):
 
     # Cache check
     if os.path.exists(absolute_save_path):
-        return os.path.join(settings.MEDIA_URL, relative_save_path).replace('\\', '/')
+        return os.path.join(settings.MEDIA_URL,
+                            relative_save_path).replace('\\', '/')
 
     # Download the image
     try:
@@ -61,4 +62,5 @@ def get_blurred_poster(image_url, blur_level=3):
 
     img.save(absolute_save_path, "JPEG")
 
-    return os.path.join(settings.MEDIA_URL, relative_save_path).replace('\\', '/')
+    return os.path.join(settings.MEDIA_URL,
+                        relative_save_path).replace('\\', '/')
