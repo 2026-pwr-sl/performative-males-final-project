@@ -1,5 +1,18 @@
 <h1>Round result</h1>
 
+<div class="poster-wrapper">
+  {% if poster_url %}
+  <img
+    src="{{ poster_url }}"
+    width="300"
+    height="450"
+    alt="movie poster"
+  />
+  {% else %}
+  <div class="poster-error">An error occured: no poster available!</div>
+  {% endif %}
+</div>
+
 {% if correct %}
 <h2 class="correct">Correct!</h2>
 {% else %}
