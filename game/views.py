@@ -1,4 +1,4 @@
-from random import sample
+from random import sample, choice
 
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm
@@ -6,6 +6,7 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from .forms import UserUpdateForm, ProfileUpdateForm
 from .models import Movie
+from .utils import get_blurred_poster
 
 
 def register(request):
@@ -52,10 +53,18 @@ def profile_settings(request):
 
 def game(request):
     if "movie_ids" not in request.session:
-        movies = list(Movie.objects.values_list("id", flat=True))
+        # movies = list(Movie.objects.values_list("id", flat=True))
+
+        # Excluded movies without poster
+        movies = list(
+            Movie.objects.exclude(poster_url='').values_list("id", flat=True)
+            )
 
         # starting state for the game
-        request.session["movie_ids"] = sample(movies, min(10, len(movies)))
+        selected_movies = sample(movies, min(10, len(movies)))
+        request.session["movie_ids"] = selected_movies
+        request.session["filter_styles"] = [
+            choice(['blur', 'pixel'])for _ in range(len(selected_movies))]
         request.session["round"] = 0
         request.session["attempt"] = 1
         request.session["score"] = 0
@@ -88,6 +97,7 @@ def game(request):
         request.session["last_correct"] = correct
         request.session["last_movie"] = movie.title
         request.session["last_guess"] = guess
+        request.session["last_poster"] = movie.poster_url
 
         if correct:
             request.session["score"] += 1
@@ -106,11 +116,22 @@ def game(request):
 
         return redirect("game")
 
+    # Apply filter to the poster
+    current_attempt = request.session["attempt"]
+    # Filter levels: 0-none, 1-low, 2-medium, 3-high
+    # Filter types: 'blur', 'pixel'
+    filter_level = 3 - (current_attempt - 1)  # we have 3 attemps max
+    filter_styles = request.session.get("filter_styles", [])
+    filter_type = filter_styles[round_idx]
+    blurred_image_url = get_blurred_poster(movie.poster_url, filter_level,
+                                           filter_type=filter_type)
+
     return render(request, "game/game.html", {
         "movie": movie,
         "round": round_idx + 1,
         "attempt": request.session["attempt"],
-        "score": request.session["score"]
+        "score": request.session["score"],
+        "poster_url": blurred_image_url
         })
 
 
@@ -125,6 +146,7 @@ def result(request):
         request.session.pop("last_movie", None)
         request.session.pop("last_guess", None)
         request.session.pop("last_correct", None)
+        request.session.pop("last_poster", None)
 
         movie_ids = request.session.get("movie_ids", [])
         round_index = request.session.get("round", 0)
@@ -144,4 +166,5 @@ def result(request):
         "movie": request.session["last_movie"],
         "guess": request.session["last_guess"],
         "correct": request.session["last_correct"],
+        "poster_url": request.session.get("last_poster"),
     })
