@@ -77,12 +77,35 @@ class Command(BaseCommand):
             for row in reader:
                 movie_id = row['id']
                 title = row['name']
+
+                # setting the rating
+                try:
+                    rating = float(row['rating'])
+                except ValueError:
+                    rating = 0.0
+
                 if movie_id in posters_dict:
                     norm_title = normalize_title(title)
-                    movies_info[norm_title] = {
-                        'real_title': title,
-                        'poster': posters_dict[movie_id]
-                    }
+
+                    # check if the movie title already appeared
+                    if norm_title in movies_info:
+                        old_rating = movies_info[norm_title]['rating']
+
+                        # if the old movie is less popular
+                        # it's probably not the one we are looking for
+                        if rating > old_rating:
+                            movies_info[norm_title] = {
+                                'real_title': title,
+                                'poster': posters_dict.get(movie_id, ''),
+                                'rating': rating
+                            }
+
+                    else:
+                        movies_info[norm_title] = {
+                            'real_title': title,
+                            'poster': posters_dict[movie_id],
+                            'rating': rating
+                        }
 
         msg = f"  -> Matched posters to {len(movies_info)} movies."
         self.stdout.write(msg)
@@ -113,38 +136,39 @@ class Command(BaseCommand):
 
                 review_text = row['Review'].strip()
 
-                if norm_title in movies_info:
-                    if norm_title not in movies_to_create:
-                        movies_to_create[norm_title] = {
-                            'real_title': movies_info[norm_title][
-                                'real_title'
-                            ],
-                            'poster': movies_info[norm_title]['poster'],
-                            'rev1': None,
-                            'rev3': None,
-                            'rev5': None
-                        }
+                if len(review_text) <= 400:
+                    if norm_title in movies_info:
+                        if norm_title not in movies_to_create:
+                            movies_to_create[norm_title] = {
+                                'real_title': movies_info[norm_title][
+                                    'real_title'
+                                ],
+                                'poster': movies_info[norm_title]['poster'],
+                                'rev1': None,
+                                'rev3': None,
+                                'rev5': None
+                            }
 
-                    # Przypisywanie recenzji na podstawie gwiazdek
-                    entry = movies_to_create[norm_title]
-                    if stars <= 2 and not entry['rev1']:
-                        entry['rev1'] = censor_review(
-                            review_text,
-                            movies_info[norm_title]['real_title'],
-                            words_to_censor
-                            )
-                    elif stars == 3 and not entry['rev3']:
-                        entry['rev3'] = censor_review(
-                            review_text,
-                            movies_info[norm_title]['real_title'],
-                            words_to_censor
-                            )
-                    elif stars >= 4 and not entry['rev5']:
-                        entry['rev5'] = censor_review(
-                            review_text,
-                            movies_info[norm_title]['real_title'],
-                            words_to_censor
-                            )
+                        # Przypisywanie recenzji na podstawie gwiazdek
+                        entry = movies_to_create[norm_title]
+                        if stars <= 2 and not entry['rev1']:
+                            entry['rev1'] = censor_review(
+                                review_text,
+                                movies_info[norm_title]['real_title'],
+                                words_to_censor
+                                )
+                        elif stars == 3 and not entry['rev3']:
+                            entry['rev3'] = censor_review(
+                                review_text,
+                                movies_info[norm_title]['real_title'],
+                                words_to_censor
+                                )
+                        elif stars >= 4 and not entry['rev5']:
+                            entry['rev5'] = censor_review(
+                                review_text,
+                                movies_info[norm_title]['real_title'],
+                                words_to_censor
+                                )
 
         self.stdout.write("4. Saving to database")
         saved_count = 0
