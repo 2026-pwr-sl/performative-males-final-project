@@ -4,6 +4,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
 from .forms import UserUpdateForm, ProfileUpdateForm
 from .models import Movie
 from .utils import get_blurred_poster
@@ -52,6 +53,17 @@ def profile_settings(request):
 
 
 def game(request):
+    # Autocomplete functionality
+    if request.method == "GET" and "q" in request.GET:
+        query = request.GET.get('q', '')
+        if query:
+            # Case-insensitive
+            movies = Movie.objects.exclude(poster_url='').filter(
+                title__icontains=query
+            ).values_list('title', flat=True)[:7]
+            return JsonResponse({'suggestions': list(movies)})
+        return JsonResponse({'suggestions': []})
+
     if "movie_ids" not in request.session:
         # movies = list(Movie.objects.values_list("id", flat=True))
 

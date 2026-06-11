@@ -1,3 +1,7 @@
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'css/game_styles.css' %}">
+
 <style>
   .timer-text {
     font-size: 1.2em;
@@ -26,17 +30,12 @@
   Time remaining: <span id="timer-display">{{ time_remaining }}</span>s
 </p>
 
-<form method="post" id="guess-form">
+<form method="post" id="guess-form" data-autocomplete-url="{% url 'game' %}">
   {% csrf_token %}
-  <input type="text" name="guess" placeholder="Your guess..." autofocus />
-
-  <input
-    type="hidden"
-    name="time_remaining"
-    id="time-remaining-input"
-    value="{{ time_remaining }}"
-  />
-
+  <div class="autocomplete-wrapper">
+    <input type="text" id="guess-input" name="guess" placeholder="Your guess..." autocomplete="off" />
+    <div id="autocomplete-list" class="autocomplete-items"></div>
+  </div>
   <button type="submit">Guess</button>
 </form>
 
@@ -64,3 +63,5 @@
     }
   }, 1000);
 </script>
+
+<script src="{% static 'js/autocomplete.js' %}"></script>
