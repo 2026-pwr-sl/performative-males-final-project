@@ -33,9 +33,24 @@
 <form method="post" id="guess-form" data-autocomplete-url="{% url 'game' %}">
   {% csrf_token %}
   <div class="autocomplete-wrapper">
-    <input type="text" id="guess-input" name="guess" placeholder="Your guess..." autocomplete="off" />
+    <input
+      type="text"
+      id="guess-input"
+      name="guess"
+      placeholder="Your guess..."
+      autocomplete="off" 
+      autofocus 
+    />
     <div id="autocomplete-list" class="autocomplete-items"></div>
   </div>
+  
+  <input
+    type="hidden"
+    name="time_remaining"
+    id="time-remaining-input"
+    value="{{ time_remaining }}"
+  />
+  
   <button type="submit">Guess</button>
 </form>
 
