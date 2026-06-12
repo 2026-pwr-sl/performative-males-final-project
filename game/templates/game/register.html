@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,18 +6,182 @@
     <meta name="description" content="Create a new Letterboxdle account">
     <meta name="keywords" content="register, signup, letterboxdle, game">
     <title>Register - Letterboxdle</title>
+    
+    <style>
+        /* Główne tło i czcionka (Main background and font) */
+        body {
+            background-color: #1a1a1a;
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column; /* Ustawia elementy w kolumnie (Arranges elements in a column) */
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        /* (NEW LOGO CONTAINER) */
+        .brand-container {
+            display: flex;
+            align-items: center; 
+            justify-content: center; 
+            margin-bottom: 15px; /* (Spacing from the registration panel) */
+        }
+
+        .brand-logo {
+            width: 60px; /* (Logo size) */
+            height: auto;
+            margin-right: 15px;
+            /* (Turns black logo into white) */
+            filter: brightness(0) invert(1); 
+        }
+
+        .brand-text {
+            font-size: 32px;
+            font-weight: bold;
+            line-height: 1.1;
+            letter-spacing: 0.5px;
+        }
+
+        /* (Login panel) */
+        .register-panel {
+            background-color: #262626;
+            border: 1px solid #ffffff;
+            border-radius: 8px;
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            box-sizing: border-box;
+        }
+
+        .register-panel h2 {
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 30px;
+            font-size: 24px;
+        }
+
+        /* (Styling a single field) */
+        .form-group {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            padding: 12px;
+            border: 1px solid #555555;
+            border-radius: 6px;
+            background-color: #333333;
+            color: #ffffff;
+            font-size: 14px;
+            box-sizing: border-box;
+            width: 100%;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #ffffff;
+        }
+
+        .help-text {
+            font-size: 11px;
+            color: #aaaaaa;
+            margin-top: 6px;
+            line-height: 1.4;
+        }
+
+        .error-text {
+            font-size: 12px;
+            color: #ff6b6b;
+            margin-top: 6px;
+        }
+
+        /*(Button) */
+        .submit-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #e0e0e0;
+            color: #1a1a1a;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background-color 0.2s;
+        }
+
+        .submit-btn:hover {
+            background-color: #ffffff;
+        }
+
+        /* Link do logowania (Login link) */
+        .login-link {
+            text-align: center;
+            margin-top: 25px;
+            font-size: 14px;
+            color: #cccccc;
+        }
+
+        .login-link a {
+            color: #ffffff;
+            text-decoration: underline;
+            font-weight: bold;
+        }
+        
+        .login-link a:hover {
+            color: #cccccc;
+        }
+    </style>
 </head>
 <body>
-    <h2>Create an Account</h2>
-    
-    <form method="post">
-        {% csrf_token %}
+
+    <!--  (Logo and Name Section) -->
+    <div class="brand-container">
+        <img src="{% static 'images/LetterBoxdle.svg' %}" alt="LetterBoxdle Logo" class="brand-logo">
+        <div class="brand-text">
+            Letter<br>Boxdle
+        </div>
+    </div>
+
+    <!-- (Registration Panel) -->
+    <div class="register-panel">
+        <h2>Create an Account</h2>
         
-        {{ form.as_p }}
+        <form method="post">
+            {% csrf_token %}
+            
+            {% for field in form %}
+                <div class="form-group">
+                    {{ field.label_tag }}
+                    {{ field }}
+                    
+                    {% for error in field.errors %}
+                        <div class="error-text">{{ error }}</div>
+                    {% endfor %}
+                    
+                    {% if field.help_text %}
+                        <div class="help-text">{{ field.help_text|safe }}</div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            
+            <button type="submit" class="submit-btn">Register</button>
+        </form>
         
-        <button type="submit">Register</button>
-    </form>
-    
-    <p>Already have an account? <a href="{% url 'login' %}">Login here</a>.</p>
+        <div class="login-link">
+            Already have an account? <a href="{% url 'login' %}">Login here</a>.
+        </div>
+    </div>
+
 </body>
 </html>
