@@ -37,6 +37,20 @@ class Profile(models.Model):
         return f"{self.user.username}'s Profile"
 
 
+class GameSession(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE,
+                             related_name="game_sessions")
+    score = models.IntegerField()
+    date_played = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-date_played']  # Newewst always first
+
+    def __str__(self):
+        return (f"{self.user.username} - Score: {self.score} "
+                f"({self.date_played.strftime('%Y-%m-%d')})")
+
+
 # the below signals ensure a Profile is created automatically
 # whenever a User registers
 @receiver(post_save, sender=User)

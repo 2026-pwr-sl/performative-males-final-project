@@ -1,11 +1,14 @@
+import csv
+
 from random import sample, choice
 
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse
 from .forms import UserUpdateForm, ProfileUpdateForm
-from .models import Movie
+from .models import Movie, GameSession
 from .utils import get_blurred_poster
 
 
@@ -81,9 +84,9 @@ def game(request):
 
     # game over
     if round_idx >= len(movie_ids):
-        score = request.session["score"]
+        score = request.session.get("score", 0)
 
-        request.session.flush()
+        finalize_game_session(request, score)
 
         return render(request, "game/game_over.html",
                       {"score": score})
@@ -180,7 +183,7 @@ def result(request):
         if round_index >= len(movie_ids):
             score = request.session.get("score", 0)
 
-            request.session.flush()
+            finalize_game_session(request, score)
 
             return render(request, "game/game_over.html", {
                 "score": score
@@ -195,3 +198,71 @@ def result(request):
         "poster_url": request.session.get("last_poster"),
         "gained_score": request.session.get("gained_score", 0)
     })
+
+
+def finalize_game_session(request, score):
+    if request.user.is_authenticated:
+        # Save current game session
+        GameSession.objects.create(user=request.user, score=score)
+
+        # Update profile stats
+        profile = request.user.profile
+        profile.games_played += 1
+        if score > profile.high_score:
+            profile.high_score = score
+        profile.save()
+
+    # Clear game-related session variables
+    game_keys = ["movie_ids", "filter_styles", "round", "attempt", "score",
+                 "prev_result", "prev_movie", "time_remaining", "last_movie",
+                 "last_guess", "last_correct", "last_poster", "gained_score"]
+    for key in game_keys:
+        request.session.pop(key, None)
+
+
+@login_required
+def profile_stats(request):
+    try:
+        # Fetch the 10 most recent games
+        recent_games_qs = (
+            GameSession.objects
+            .filter(user=request.user)
+            .order_by('-date_played')[:10]
+            )
+        # Reverse to chronological order
+        recent_games = list(recent_games_qs)[::-1]
+
+        # Handle CSV Download
+        if request.GET.get('download') == 'csv':
+            response = HttpResponse(content_type='text/csv')
+            response['Content-Disposition'] = (
+                'attachment; filename="my_latest_scores.csv"'
+                )
+
+            writer = csv.writer(response)
+            writer.writerow(['Playthrough', 'Score', 'Date Played'])
+
+            for index, game in enumerate(recent_games, start=1):
+                writer.writerow([index,
+                                 game.score,
+                                 game.date_played.strftime('%Y-%m-%d %H:%M')])
+
+            return response
+
+        # Prepare Data for Chart.js
+        scores = [game.score for game in recent_games]
+        labels = [f"Game {i+1}" for i in range(len(scores))]
+
+        context = {
+            "scores": scores,
+            "labels": labels,
+            "total_runs": request.user.profile.games_played,
+            "best_score": request.user.profile.high_score,
+            "has_data": len(scores) > 0
+        }
+        return render(request, "game/stats.html", context)
+
+    except Exception as e:
+        return render(request,
+                      "game/error.html",
+                      {"message": f"Could not load stats: {str(e)}"})
