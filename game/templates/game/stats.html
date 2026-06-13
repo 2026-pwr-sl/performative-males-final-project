@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="description" content="View your Letterboxdle game statistics and performance chart.">
+    <meta name="keywords" content="stats, performance, scores, letterboxdle">
     <title>My Stats - Letterboxdle</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js/dist/chart.umd.min.js"></script>
     <style>
@@ -25,6 +27,10 @@
             max-width: 600px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
             box-sizing: border-box;
+        }
+        .panel-title {
+            text-align: center;
+            margin-top: 0;
         }
         .stats-header {
             display: flex;
@@ -60,13 +66,24 @@
             box-sizing: border-box;
         }
         .btn:hover { background-color: #ffffff; }
+        .empty-state {
+            text-align: center; 
+            color: #aaaaaa; 
+            margin-top: 30px;
+        }
+        .back-link {
+            display: block; 
+            text-align: center; 
+            margin-top: 20px; 
+            color: #aaaaaa;
+        }
         canvas { margin-top: 30px; }
     </style>
 </head>
 <body>
 
     <div class="stats-panel">
-        <h2 style="text-align: center; margin-top: 0;">Your Performance</h2>
+        <h2 class="panel-title">Your Performance</h2>
         
         <div class="stats-header">
             <div class="stat-box">
@@ -81,24 +98,21 @@
 
         {% if has_data %}
             <canvas id="scoreChart" width="400" height="250"></canvas>
-            
             <a href="{% url 'profile_stats' %}?download=csv" class="btn">Download Last 10 Scores (CSV)</a>
         {% else %}
-            <p style="text-align: center; color: #aaaaaa; margin-top: 30px;">
+            <p class="empty-state">
                 You haven't played any games yet. Start playing to see your chart!
             </p>
         {% endif %}
 
-        <a href="{% url 'profile' %}" style="display:block; text-align:center; margin-top: 20px; color: #aaaaaa;">Back to Profile</a>
+        <a href="{% url 'profile' %}" class="back-link">Back to Profile</a>
     </div>
 
     {% if has_data %}
-    
     {{ labels|json_script:"chart-labels" }}
     {{ scores|json_script:"chart-scores" }}
 
     <script>
-        // Parse the JSON data securely
         const chartLabels = JSON.parse(document.getElementById('chart-labels').textContent);
         const chartScores = JSON.parse(document.getElementById('chart-scores').textContent);
 
@@ -133,9 +147,8 @@
                     }
                 },
                 plugins: {
-                    legend: {
-                        display: false,
-                        onClick: null
+                    legend: { 
+                        display: false 
                     }
                 }
             }

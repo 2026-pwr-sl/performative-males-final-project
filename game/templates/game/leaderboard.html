@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="description" content="View the global top 10 leaderboard for Letterboxdle.">
+    <meta name="keywords" content="leaderboard, top players, high scores, letterboxdle">
     <title>Global Leaderboard - Letterboxdle</title>
     <style>
         body {
@@ -52,10 +54,9 @@
             font-weight: bold;
             width: 50px;
         }
-        /* Podium styling */
-        .rank-1 { color: #ffd700; } /* Gold */
-        .rank-2 { color: #c0c0c0; } /* Silver */
-        .rank-3 { color: #cd7f32; } /* Bronze */
+        .rank-1 { color: #ffd700; }
+        .rank-2 { color: #c0c0c0; }
+        .rank-3 { color: #cd7f32; }
         
         .score {
             text-align: right;
@@ -79,6 +80,11 @@
         }
         .btn:hover {
             background-color: #ffffff;
+        }
+        .empty-row {
+            text-align: center;
+            color: #aaaaaa;
+            padding: 30px 0;
         }
     </style>
 </head>
@@ -110,7 +116,7 @@
                     </tr>
                 {% empty %}
                     <tr>
-                        <td colspan="3" style="text-align: center; color: #aaaaaa; padding: 30px 0;">
+                        <td colspan="3" class="empty-row">
                             No scores recorded yet. Be the first!
                         </td>
                     </tr>
