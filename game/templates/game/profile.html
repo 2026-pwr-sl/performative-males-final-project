@@ -23,9 +23,15 @@
     <p>Welcome, <strong>{{ user.username }}</strong>!</p>
 
     <div style="margin-bottom: 20px;">
-        <a href="{% url 'profile_stats' %}" style="display: inline-block; padding: 10px 20px; border-radius: 5px; font-weight: bold;">
+        <a href="{% url 'profile_stats' %}" style="display: inline-block; padding: 10px 20px; border-radius: 5px;">
             View My Game Stats
         </a>
+    </div>
+
+    <div style="margin-bottom: 20px;">
+        <a href="{% url 'leaderboard' %}" style="display: inline-block; padding: 10px 20px; border-radius: 5px;">
+            View Leaderboard
+    </a>
     </div>
 
     <hr>

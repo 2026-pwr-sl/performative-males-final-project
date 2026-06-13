@@ -8,7 +8,7 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from .forms import UserUpdateForm, ProfileUpdateForm
-from .models import Movie, GameSession
+from .models import Movie, GameSession, Profile
 from .utils import get_blurred_poster
 
 
@@ -18,7 +18,8 @@ def register(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect("home")
+            # return redirect("home") we do not have home yet :c
+            return redirect("login")
     else:
         form = UserCreationForm()
 
@@ -263,6 +264,30 @@ def profile_stats(request):
         return render(request, "game/stats.html", context)
 
     except Exception as e:
-        return render(request,
-                      "game/error.html",
-                      {"message": f"Could not load stats: {str(e)}"})
+        return render(
+            request,
+            "game/error.html",
+            {"message": f"Could not load stats: {str(e)}"}
+            )
+
+
+def leaderboard(request):
+    try:
+        # Fetch top 10 profiles with the highest high_score
+        top_players = (
+            Profile.objects.
+            select_related('user').
+            order_by('-high_score')[:10]
+            )
+
+        context = {
+            "top_players": top_players
+        }
+        return render(request, "game/leaderboard.html", context)
+
+    except Exception as e:
+        return render(
+            request,
+            "game/error.html",
+            {"message": f"Could not load leaderboard: {str(e)}"}
+            )
