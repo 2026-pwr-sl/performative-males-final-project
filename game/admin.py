@@ -1,12 +1,14 @@
 from django.contrib import admin
 from .models import Movie, Profile
 
+
 @admin.register(Movie)
 class MovieAdmin(admin.ModelAdmin):
     # Shows these columns in the list view
     list_display = ("title", "poster_url")
     # Adds a search bar so you can quickly find a movie by title
     search_fields = ("title",)
+
 
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
