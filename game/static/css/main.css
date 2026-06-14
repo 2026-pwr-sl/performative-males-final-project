@@ -147,3 +147,132 @@ body {
 .login-link a:hover {
     color: #cccccc;
 }
+/* PROFILE SETTINGS SPECIFIC STYLES*/
+
+/* wider panedl for settings */
+.profile-panel {
+    background-color: #262626;
+    border: 1px solid #ffffff;
+    border-radius: 8px;
+    padding: 40px;
+    width: 100%;
+    max-width: 500px; /* Zwiększone z 400px, by pomieścić przyciski obok siebie */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    box-sizing: border-box;
+    margin-bottom: 40px;
+}
+
+.profile-panel h2 {
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 26px;
+}
+
+/* Avatar */
+.avatar-section {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.avatar-img {
+    border-radius: 50%;
+    border: 2px solid #ffffff;
+    object-fit: cover;
+    background-color: #1a1a1a;
+}
+
+/* (statisctics and Leaderboard) */
+.action-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-bottom: 25px;
+}
+
+.btn-nav {
+    background-color: #333333;
+    color: #ffffff;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: bold;
+    border: 1px solid #555555;
+    transition: all 0.2s ease;
+}
+
+.btn-nav:hover {
+    background-color: #555555;
+    border-color: #ffffff;
+}
+
+/* divider elements */
+.divider {
+    border: none;
+    border-top: 1px solid #444444;
+    margin: 25px 0;
+}
+
+.section-title {
+    font-size: 18px;
+    margin-bottom: 15px;
+    margin-top: 0;
+}
+
+/* (File Input) */
+.file-group input[type="file"] {
+    padding: 8px;
+    background-color: transparent;
+    border: 1px dashed #555555;
+    color: #aaaaaa;
+}
+
+/* button variants */
+.btn-danger {
+    background-color: transparent;
+    border: 1px solid #ff4c4c;
+    color: #ff4c4c;
+}
+
+.btn-danger:hover {
+    background-color: #ff4c4c;
+    color: #ffffff;
+    border-color: #ff4c4c;
+}
+
+.btn-logout {
+    background-color: #444444;
+    color: #ffffff;
+    margin-top: 15px;
+}
+
+.btn-logout:hover {
+    background-color: #666666;
+}
+/* (Back button) */
+.btn-back {
+    display: inline-block;
+    color: #aaaaaa;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 20px;
+    transition: color 0.2s ease;
+}
+
+.btn-back:hover {
+    color: #ffffff;
+}
+.profile-brand {
+    margin-bottom: 20px;
+    margin-top: 20px;
+}
+
+.profile-brand-text {
+    font-size: 32px;
+}
+
+.danger-title {
+    color: #ff6b6b;
+}

@@ -17,7 +17,7 @@ urlpatterns = [
         auth_views.LogoutView.as_view(next_page="login"),
         name="logout"
     ),
-    path("profile/", views.profile_settings, name="profile"),
+    path("profile/settings/", views.profile_settings, name="profile_settings"),
     path("profile/stats/", views.profile_stats, name="profile_stats"),
     path("leaderboard/", views.leaderboard, name="leaderboard"),
     path("", views.register, name="home"),

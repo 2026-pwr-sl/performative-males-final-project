@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,83 +6,78 @@
     <meta name="description" content="Manage your Letterboxdle profile settings">
     <meta name="keywords" content="profile, settings, account, letterboxdle">
     <title>Profile Settings - Letterboxdle</title>
-    <style>
-        .avatar-img {
-            border-radius: 50%;
-        }
-        .btn-danger {
-            color: red;
-            font-weight: bold;
-        }
-        .action-buttons {
-            margin-bottom: 20px;
-        }
-        .btn-nav {
-            display: inline-block;
-            padding: 10px 20px;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-            font-weight: bold;
-        }
-        .btn-stats {
-            background-color: #e0e0e0;
-            color: #1a1a1a;
-        }
-        .btn-leaderboard {
-            background-color: #e0e0e0;
-            color: #1a1a1a;
-            margin-left: 10px;
-        }
-    </style>
+    
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
 </head>
 <body>
-    <h2>Profile Settings</h2>
-    
-    <img src="{{ user.profile.avatar.url }}" alt="Profile Picture" width="100" height="100" class="avatar-img">
-    
-    <p>Welcome, <strong>{{ user.username }}</strong>!</p>
 
-    <div class="action-buttons">
-        <a href="{% url 'profile_stats' %}" class="btn-nav btn-stats">
-            View My Game Stats
-        </a>
-        <a href="{% url 'leaderboard' %}" class="btn-nav btn-leaderboard">
-            View Leaderboard
-        </a>
+    <div class="brand-container profile-brand">
+        <img src="{% static 'images/LetterBoxdle.svg' %}" alt="LetterBoxdle Logo" class="brand-logo" width="50" height="50">
+        <div class="brand-text profile-brand-text">
+            LetterBoxdle
+        </div>
     </div>
 
-    <hr>
-
-    <h3>Update Profile</h3>
-    
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
+    <div class="profile-panel">
+        <a href="{% url 'home' %}" class="btn-back">← Back to Home</a>
         
-        {{ u_form.as_p }}
-        {{ p_form.as_p }}
+        <h2>Profile Settings</h2>
         
-        <button type="submit" name="update_profile">Save Changes</button>
-    </form>
+        <div class="avatar-section">
+            <img src="{{ user.profile.avatar.url }}" alt="Profile Picture" width="100" height="100" class="avatar-img">
+            <p>Welcome, <strong>{{ user.username }}</strong>!</p>
+        </div>
 
-    <hr>
+        <hr class="divider">
 
-    <h3>Danger Zone</h3>
-    <p>Deleting your account is permanent. Your high scores and streak history will be wiped.</p>
-    
-    <form method="post">
-        {% csrf_token %}
-        <button type="submit" name="delete_account" class="btn-danger">
-            Delete My Account
-        </button>
-    </form>
+        <h3 class="section-title">Update Profile</h3>
+        
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            {% for field in u_form %}
+                <div class="form-group">
+                    {{ field.label_tag }}
+                    {{ field }}
+                    {% for error in field.errors %}
+                        <div class="error-text">{{ error }}</div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
 
-    <br>
-    
-    <form method="post" action="{% url 'logout' %}">
-        {% csrf_token %}
-        <button type="submit">Logout</button>
-    </form>
+            {% for field in p_form %}
+                <div class="form-group file-group">
+                    {{ field.label_tag }}
+                    {{ field }}
+                    {% for error in field.errors %}
+                        <div class="error-text">{{ error }}</div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+            
+            <button type="submit" name="update_profile" class="submit-btn">Save Changes</button>
+        </form>
+
+        <hr class="divider">
+
+        <div class="danger-zone">
+            <h3 class="section-title danger-title">Danger Zone</h3>
+            <p class="help-text">Deleting your account is permanent. Your high scores and streak history will be wiped.</p>
+            
+            <form method="post">
+                {% csrf_token %}
+                <button type="submit" name="delete_account" class="submit-btn btn-danger">
+                    Delete My Account
+                </button>
+            </form>
+        </div>
+
+        <form method="post" action="{% url 'logout' %}" class="logout-form">
+            {% csrf_token %}
+            <button type="submit" class="submit-btn btn-logout">Logout</button>
+        </form>
+
+    </div>
 
 </body>
 </html>
