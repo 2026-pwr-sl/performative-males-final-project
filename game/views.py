@@ -89,7 +89,7 @@ def game(request):
         request.session["prev_movie"] = None
 
         # total time left
-        request.session["time_remaining"] = 30
+        request.session["time_remaining"] = 60
 
     movie_ids = request.session["movie_ids"]
     round_idx = request.session["round"]
@@ -129,9 +129,9 @@ def game(request):
             # 2nd attempt: 6 points
             # 3rd attempt: 2 points
             # TIME BONUS
-            # 1 point for every 5 seconds remaining (max 6 points)
+            # 1 point for every 10 seconds remaining (max 6 points)
             gained_score = 10 - (request.session["attempt"] - 1) * 4
-            gained_score += min(6, time_left // 5)
+            gained_score += min(6, time_left // 10)
 
             request.session["gained_score"] = gained_score
 
@@ -139,7 +139,7 @@ def game(request):
             request.session["round"] += 1
             request.session["attempt"] = 1
 
-            request.session["time_remaining"] = 30
+            request.session["time_remaining"] = 60
 
             return redirect("result")
 
@@ -150,7 +150,7 @@ def game(request):
                 request.session["round"] += 1
                 request.session["attempt"] = 1
 
-                request.session["time_remaining"] = 30
+                request.session["time_remaining"] = 60
 
                 return redirect("result")
 
@@ -171,7 +171,7 @@ def game(request):
         "round": round_idx + 1,
         "attempt": request.session["attempt"],
         "score": request.session["score"],
-        "time_remaining": request.session.get("time_remaining", 30),
+        "time_remaining": request.session.get("time_remaining", 60),
         "poster_url": blurred_image_url
         })
 
@@ -263,7 +263,7 @@ def game_endless(request):
         request.session["filter_type_endless"] = choice(['blur', 'pixel'])
 
         # total time left
-        request.session["time_remaining_endless"] = 30
+        request.session["time_remaining_endless"] = 60
     else:
         movie_id = request.session.get("movie_id_endless")
 
@@ -327,7 +327,7 @@ def game_endless(request):
         "movie": movie,
         "streak": request.session.get("streak_endless", 0),
         "attempt": current_attempt,
-        "time_remaining": request.session.get("time_remaining_endless", 30),
+        "time_remaining": request.session.get("time_remaining_endless", 60),
         "poster_url": blurred_image_url
         })
 
