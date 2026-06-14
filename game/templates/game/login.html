@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,18 +6,199 @@
     <meta name="description" content="Log in to your Letterboxdle account">
     <meta name="keywords" content="login, letterboxdle, game">
     <title>Login - Letterboxdle</title>
+    
+    <style>
+        /* (Main background and font) */
+        body {
+            background-color: #1a1a1a;
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        /* --- (LOGO AND NAME CONTAINER) --- */
+        .brand-container {
+            display: flex;
+            align-items: center; 
+            justify-content: center; 
+            margin-bottom: 15px; 
+        }
+
+        .brand-logo {
+            width: 75px; 
+            height: auto;
+            margin-right: 20px; 
+            filter: brightness(0) invert(1); 
+        }
+
+        .brand-text {
+            font-size: 52px; 
+            font-weight: bold;
+            line-height: 1;
+            letter-spacing: 1px; 
+        }
+
+        /* (Login panel) */
+        .login-panel {
+            background-color: #262626;
+            border: 1px solid #ffffff;
+            border-radius: 8px;
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            box-sizing: border-box;
+        }
+
+        .login-panel h2 {
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 30px;
+            font-size: 24px;
+        }
+
+        /* (Styling a single field) */
+        .form-group {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            padding: 12px;
+            border: 1px solid #555555;
+            border-radius: 6px;
+            background-color: #333333;
+            color: #ffffff;
+            font-size: 14px;
+            box-sizing: border-box;
+            width: 100%;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #ffffff;
+        }
+
+        .help-text {
+            font-size: 11px;
+            color: #aaaaaa;
+            margin-top: 6px;
+            line-height: 1.4;
+        }
+
+        /* (Single field errors) */
+        .error-text {
+            font-size: 12px;
+            color: #ff6b6b;
+            margin-top: 6px;
+        }
+
+        /* (Whole form errors for example: "Wrong password") */
+        .non-field-errors {
+            background-color: #ff4c4c;
+            color: white;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        /* (Button) */
+        .submit-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #e0e0e0;
+            color: #1a1a1a;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background-color 0.2s;
+        }
+
+        .submit-btn:hover {
+            background-color: #ffffff;
+        }
+
+        /* (Register link) */
+        .register-link {
+            text-align: center;
+            margin-top: 25px;
+            font-size: 14px;
+            color: #cccccc;
+        }
+
+        .register-link a {
+            color: #ffffff;
+            text-decoration: underline;
+            font-weight: bold;
+        }
+        
+        .register-link a:hover {
+            color: #cccccc;
+        }
+    </style>
 </head>
 <body>
-    <h2>Login to Letterboxdle</h2>
-    
-    <form method="post">
-        {% csrf_token %}
+
+    <div class="brand-container">
+        <img src="{% static 'images/LetterBoxdle.svg' %}" alt="LetterBoxdle Logo" class="brand-logo" width="75" height="75">
+        <div class="brand-text">
+            LetterBoxdle
+        </div>
+    </div>
+
+    <div class="login-panel">
+        <h2>Login to Letterboxdle</h2>
         
-        {{ form.as_p }}
+        <form method="post">
+            {% csrf_token %}
+            
+            {% if form.non_field_errors %}
+                <div class="non-field-errors">
+                    {% for error in form.non_field_errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+            
+            {% for field in form %}
+                <div class="form-group">
+                    {{ field.label_tag }}
+                    {{ field }}
+                    
+                    {% for error in field.errors %}
+                        <div class="error-text">{{ error }}</div>
+                    {% endfor %}
+                    
+                    {% if field.help_text %}
+                        <div class="help-text">{{ field.help_text|safe }}</div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            
+            <button type="submit" class="submit-btn">Login</button>
+        </form>
         
-        <button type="submit">Login</button>
-    </form>
-    
-    <p>Don't have an account? <a href="{% url 'register' %}">Register here</a>.</p>
+        <div class="register-link">
+            Don't have an account? <a href="{% url 'register' %}">Register here</a>.
+        </div>
+    </div>
+
 </body>
 </html>
