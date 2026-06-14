@@ -1,82 +1,192 @@
-{% load static %}
+{% extends 'base.html' %} {% load static %} {% block title %}Movie {{ round
+}}/10 - Letterboxdle{% endblock %} {% block content_container %}
+<div class="game-split-wrapper">
+  <div class="game-main-box">
+    <h1>Movie {{ round }}/10</h1>
 
-<link rel="stylesheet" href="{% static 'css/game_styles.css' %}">
+    <div class="reviews-wrapper">
+      <div class="review-box">
+        <strong>5★ Review:</strong> {{ movie.review_5 }}
+      </div>
 
+      {% if attempt >= 2 %}
+      <div class="review-box review-attempt-2">
+        <strong>3★ Review:</strong> {{ movie.review_3 }}
+      </div>
+      {% endif %} {% if attempt >= 3 %}
+      <div class="review-box review-attempt-3">
+        <strong>1★ Review:</strong> {{ movie.review_1 }}
+      </div>
+      {% endif %}
+    </div>
+
+    <p class="timer-text">
+      Time remaining: <span id="timer-display">{{ time_remaining }}</span>s
+    </p>
+
+    <form
+      method="post"
+      id="guess-form"
+      data-autocomplete-url="{% url 'game' %}"
+    >
+      {% csrf_token %}
+      <div class="autocomplete-wrapper autocomplete-space">
+        <input
+          type="text"
+          id="guess-input"
+          name="guess"
+          placeholder="Your guess..."
+          autocomplete="off"
+          autofocus
+        />
+        <div id="autocomplete-list" class="autocomplete-items"></div>
+      </div>
+      <input
+        type="hidden"
+        name="time_remaining"
+        id="time-remaining-input"
+        value="{{ time_remaining }}"
+      />
+      <button type="submit" class="submit-btn">Guess</button>
+    </form>
+
+    <div class="game-stats">
+      <span>Attempt: {{ attempt }}/3</span>
+      <span>Score: {{ score }}</span>
+    </div>
+  </div>
+
+  <div class="game-poster-box">
+    <div class="poster-wrapper">
+      <img
+        src="{{ poster_url }}"
+        width="300"
+        height="450"
+        alt="movie poster"
+        class="custom-poster"
+      />
+    </div>
+  </div>
+</div>
+{% endblock %} {% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/game_styles.css' %}" />
 <style>
+  .game-split-wrapper {
+    display: flex;
+    flex-direction: row;
+    gap: 24px;
+    align-items: stretch;
+    max-width: 1050px;
+    width: 100%;
+  }
+
+  /* left box */
+  .game-main-box {
+    background-color: #1c1c1e; /* Podmień na dokładny kolor swojego login-panel, jeśli jest inny */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 32px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    text-align: left;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+
+  /* right box */
+  .game-poster-box {
+    background-color: #1c1c1e;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+
+  .game-main-box h1 {
+    margin: 0 0 10px 0;
+    font-size: 1.8rem;
+  }
+
+  .review-box {
+    background: rgba(255, 255, 255, 0.05);
+    border-left: 4px solid #2ed573;
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin: 8px 0;
+    font-style: italic;
+    line-height: 1.5;
+  }
+
+  .review-attempt-2 {
+    border-left-color: #ffa502;
+  }
+  .review-attempt-3 {
+    border-left-color: #ff4757;
+  }
+  .autocomplete-space {
+    margin-bottom: 15px;
+  }
+
   .timer-text {
-    font-size: 1.2em;
+    font-size: 1.3em;
     font-weight: bold;
     color: #ff4757;
+    margin: 10px 0;
+  }
+
+  .custom-poster {
+    width: 300px;
+    height: 450px;
+    border-radius: 8px;
+    display: block;
+    object-fit: cover;
+  }
+
+  .game-stats {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.1em;
+    font-weight: 600;
+    margin-top: auto;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  #guess-input {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  @media (max-width: 850px) {
+    .game-split-wrapper {
+      flex-direction: column-reverse;
+      align-items: center;
+    }
+    .game-poster-box {
+      width: fit-content;
+    }
   }
 </style>
-
-<h1>Movie {{ round }}/10</h1>
-
-<div class="poster-wrapper">
-  <img src="{{ poster_url }}" width="300" height="450" alt="movie poster" />
-</div>
-
-<p>{{ movie.review_5 }}</p>
-
-{% if attempt >= 2 %}
-<p>{{ movie.review_3 }}</p>
-{% endif %} {% if attempt >= 3 %}
-<p>{{ movie.review_1 }}</p>
-{% endif %}
-
-<hr />
-
-<p class="timer-text">
-  Time remaining: <span id="timer-display">{{ time_remaining }}</span>s
-</p>
-
-<form method="post" id="guess-form" data-autocomplete-url="{% url 'game' %}">
-  {% csrf_token %}
-  <div class="autocomplete-wrapper">
-    <input
-      type="text"
-      id="guess-input"
-      name="guess"
-      placeholder="Your guess..."
-      autocomplete="off" 
-      autofocus 
-    />
-    <div id="autocomplete-list" class="autocomplete-items"></div>
-  </div>
-  
-  <input
-    type="hidden"
-    name="time_remaining"
-    id="time-remaining-input"
-    value="{{ time_remaining }}"
-  />
-  
-  <button type="submit">Guess</button>
-</form>
-
-<p>Attempt: {{ attempt }}/3</p>
-<p>Score: {{ score }}</p>
-
+{% endblock %} {% block extra_js %}
 <script>
   let timeLeft = parseInt("{{ time_remaining }}", 10);
-
   const timerDisplay = document.getElementById("timer-display");
   const timeInput = document.getElementById("time-remaining-input");
   const form = document.getElementById("guess-form");
 
   const countdown = setInterval(function () {
     timeLeft--;
-
-    timerDisplay.textContent = timeLeft;
-
-    timeInput.value = timeLeft;
-
+    if (timerDisplay) timerDisplay.textContent = timeLeft;
+    if (timeInput) timeInput.value = timeLeft;
     if (timeLeft <= 0) {
       clearInterval(countdown);
-
       form.submit();
     }
   }, 1000);
 </script>
-
 <script src="{% static 'js/autocomplete.js' %}"></script>
+{% endblock %}
