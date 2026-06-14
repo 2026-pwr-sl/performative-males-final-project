@@ -28,6 +28,17 @@ Letterboxdle{% endblock %} {% block extra_css %}
     font-size: 2.2rem;
   }
 
+  .wrong-answer-text {
+    margin: 0;
+  }
+  .wrong-answer-strike {
+    text-decoration: line-through;
+    opacity: 0.7;
+  }
+  .score-highlight {
+    color: #ffa502;
+  }
+
   .movie-title {
     font-size: 1.3rem;
     background: rgba(255, 255, 255, 0.05);
@@ -82,11 +93,8 @@ Letterboxdle{% endblock %} {% block extra_css %}
       <h2 class="correct">Correct!</h2>
       {% else %}
       <h2 class="wrong">Wrong!</h2>
-      <p style="margin: 0">
-        Your answer:
-        <span style="text-decoration: line-through; opacity: 0.7"
-          >{{ guess }}</span
-        >
+      <p class="wrong-answer-text">
+        Your answer: <span class="wrong-answer-strike">{{ guess }}</span>
       </p>
       {% endif %}
 
@@ -96,8 +104,7 @@ Letterboxdle{% endblock %} {% block extra_css %}
 
       <p class="score-text">
         Your score for this round:
-        <strong style="color: #ffa502">{{ gained_score }}</strong>
-        / 15
+        <strong class="score-highlight">{{ gained_score }}</strong> / 15
       </p>
 
       <form method="post">

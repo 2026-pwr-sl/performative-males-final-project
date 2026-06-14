@@ -16,9 +16,18 @@ Letterboxdle{% endblock %} {% block extra_css %}
     text-shadow: 0 0 8px rgba(255, 177, 66, 0.4);
   }
 
+  .rating-number-score {
+    font-size: 1.1rem;
+    margin-left: 5px;
+  }
+
   .final-score {
     font-size: 1.25rem;
     margin: 15px 0;
+  }
+
+  .final-score strong {
+    color: #2ed573;
   }
 
   .game-over-form button {
@@ -47,7 +56,6 @@ Letterboxdle{% endblock %} {% block extra_css %}
   const container = document.getElementById("star-container");
   let starHtml = "";
 
-  // Generating stars
   for (let i = 1; i <= 5; i++) {
     if (starsAmount >= i) {
       starHtml += "<span>★</span>";
@@ -58,6 +66,6 @@ Letterboxdle{% endblock %} {% block extra_css %}
     }
   }
 
-  container.innerHTML = `${starHtml} <strong style="font-size: 1.1rem; margin-left: 5px;">(${starsAmount.toFixed(1)})</strong>`;
+  container.innerHTML = `${starHtml} <strong class="rating-number-score">(${starsAmount.toFixed(1)})</strong>`;
 </script>
 {% endblock %}
