@@ -1,11 +1,11 @@
 import csv
-
 from random import sample, choice
 
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
+from django.db.models import Max, Count
 from django.http import JsonResponse, HttpResponse
 from .forms import UserUpdateForm, ProfileUpdateForm
 from .models import Movie, GameSession, Profile
@@ -367,41 +367,86 @@ def finalize_endless(request, streak):
 def profile_stats(request):
     try:
         # Fetch the 10 most recent games
-        recent_games_qs = (
+        classic_games_qs = (
             GameSession.objects
-            .filter(user=request.user)
+            .filter(user=request.user, endless_mode=False)
             .order_by('-date_played')[:10]
-            )
+        )
+        classic_games = list(classic_games_qs)[::-1]
+
+        endless_games_qs = (
+            GameSession.objects
+            .filter(user=request.user, endless_mode=True)
+            .order_by('-date_played')[:10]
+        )
+        endless_games = list(endless_games_qs)[::-1]
         # Reverse to chronological order
-        recent_games = list(recent_games_qs)[::-1]
 
         # Handle CSV Download
         if request.GET.get('download') == 'csv':
+            mode = request.GET.get('mode', 'classic')
             response = HttpResponse(content_type='text/csv')
             response['Content-Disposition'] = (
-                'attachment; filename="my_latest_scores.csv"'
+                f'attachment; filename="my_latest_{mode}_scores.csv"'
                 )
 
             writer = csv.writer(response)
-            writer.writerow(['Playthrough', 'Score', 'Date Played'])
+            writer.writerow([
+                'Playthrough', 'Score', 'Game Mode', 'Date Played'
+                ])
 
-            for index, game in enumerate(recent_games, start=1):
-                writer.writerow([index,
-                                 game.score,
-                                 game.date_played.strftime('%Y-%m-%d %H:%M')])
+            if mode == 'endless':
+                export_games = endless_games
+            else:
+                export_games = classic_games
+
+            for index, game in enumerate(export_games, start=1):
+                writer.writerow([
+                    index,
+                    game.score,
+                    "Endless" if game.endless_mode else "Classic",
+                    game.date_played.strftime('%Y-%m-%d %H:%M')
+                ])
 
             return response
 
         # Prepare Data for Chart.js
-        scores = [game.score for game in recent_games]
-        labels = [f"Game {i+1}" for i in range(len(scores))]
+
+        classic_stats = (
+            GameSession.objects
+            .filter(user=request.user, endless_mode=False)
+            .aggregate(total=Count('id'), best=Max('score'))
+        )
+        classic_total = classic_stats['total'] or 0
+        classic_best = classic_stats['best'] or 0
+
+        endless_stats = (
+            GameSession.objects
+            .filter(user=request.user, endless_mode=True)
+            .aggregate(total=Count('id'), best=Max('score'))
+        )
+        endless_total = endless_stats['total'] or 0
+        endless_best = endless_stats['best'] or 0
+
+        classic_scores = [game.score for game in classic_games]
+        classic_labels = [f"Game {i+1}" for i in range(len(classic_scores))]
+
+        endless_scores = [game.score for game in endless_games]
+        endless_labels = [f"Game {i+1}" for i in range(len(endless_scores))]
 
         context = {
-            "scores": scores,
-            "labels": labels,
-            "total_runs": request.user.profile.games_played,
+            "classic_scores": classic_scores,
+            "classic_labels": classic_labels,
+            "endless_scores": endless_scores,
+            "endless_labels": endless_labels,
+            "classic_total": classic_total,
+            "classic_best": classic_best,
+            "endless_total": endless_total,
+            "endless_best": endless_best,
             "best_score": request.user.profile.high_score,
-            "has_data": len(scores) > 0
+            "has_classic_data": len(classic_scores) > 0,
+            "has_endless_data": len(endless_scores) > 0,
+            "has_data": (len(classic_scores) > 0 or len(endless_scores) > 0)
         }
         return render(request, "game/stats.html", context)
 

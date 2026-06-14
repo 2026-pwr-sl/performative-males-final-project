@@ -31,6 +31,7 @@ class Profile(models.Model):
 
     # for endless mode could be deleted if we decide not to use this
     longest_streak = models.IntegerField(default=0)
+    current_streak = models.IntegerField(default=0)
 
     def __str__(self):
         return f"{self.user.username}'s Profile"
