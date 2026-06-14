@@ -1,6 +1,7 @@
 from django.urls import path
 from . import views
 from django.contrib.auth import views as auth_views
+from django.shortcuts import render
 
 
 urlpatterns = [
@@ -22,4 +23,10 @@ urlpatterns = [
     path("", views.register, name="home"),
     path("game/", views.game, name="game"),
     path("result/", views.result, name="result"),
+
+    path("error-test/", lambda request: render(
+        request,
+        "game/error.html",
+        {"message": "This is a test error!"}
+        )),
 ]

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="An error occurred in Letterboxdle.">
+    <meta name="keywords" content="error, letterboxdle, oops">
+    <title>Error - Letterboxdle</title>
+    
+    <style>
+        body {
+            background-color: #1a1a1a;
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .error-panel {
+            background-color: #262626;
+            border: 1px solid #ff6b6b;
+            border-radius: 8px;
+            padding: 40px;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.2);
+            box-sizing: border-box;
+            text-align: center;
+        }
+
+        .error-panel h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #ff6b6b;
+        }
+
+        .error-message {
+            font-size: 16px;
+            color: #cccccc;
+            margin-bottom: 30px;
+            line-height: 1.5;
+            background-color: #333333;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 4px solid #ff6b6b;
+            text-align: left;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background-color: #e0e0e0;
+            color: #1a1a1a;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            box-sizing: border-box;
+            transition: background-color 0.2s;
+        }
+
+        .btn:hover {
+            background-color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="error-panel">
+        <h2>⚠️ Oops! Something went wrong.</h2>
+        
+        <div class="error-message">
+            {{ message|default:"An unexpected error occurred. Please try again later." }}
+        </div>
+        
+        <a href="{% url 'home' %}" class="btn">Return to Home</a>
+    </div>
+
+</body>
+</html>
