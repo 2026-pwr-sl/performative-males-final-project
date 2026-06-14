@@ -11,15 +11,15 @@
 </head>
 <body>
 
-    <div class="brand-container" style="margin-bottom: 20px; margin-top: 20px;">
+    <div class="brand-container profile-brand">
         <img src="{% static 'images/LetterBoxdle.svg' %}" alt="LetterBoxdle Logo" class="brand-logo" width="50" height="50">
-        <div class="brand-text" style="font-size: 32px;">
+        <div class="brand-text profile-brand-text">
             LetterBoxdle
         </div>
     </div>
 
     <div class="profile-panel">
-        <a href="{% url 'home' %}" class="btn-back">&larr; Back to Home</a>
+        <a href="{% url 'home' %}" class="btn-back">← Back to Home</a>
         
         <h2>Profile Settings</h2>
         
@@ -61,7 +61,7 @@
         <hr class="divider">
 
         <div class="danger-zone">
-            <h3 class="section-title" style="color: #ff6b6b;">Danger Zone</h3>
+            <h3 class="section-title danger-title">Danger Zone</h3>
             <p class="help-text">Deleting your account is permanent. Your high scores and streak history will be wiped.</p>
             
             <form method="post">

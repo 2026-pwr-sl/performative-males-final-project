@@ -264,3 +264,15 @@ body {
 .btn-back:hover {
     color: #ffffff;
 }
+.profile-brand {
+    margin-bottom: 20px;
+    margin-top: 20px;
+}
+
+.profile-brand-text {
+    font-size: 32px;
+}
+
+.danger-title {
+    color: #ff6b6b;
+}
