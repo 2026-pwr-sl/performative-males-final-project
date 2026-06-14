@@ -5,7 +5,7 @@ from game.models import Movie
 
 @pytest.mark.django_db
 def test_register_page_loads(client):
-    # Check if register returns code 200 (OK)
+    # check if register returns code 200 (OK)
     url = reverse('register')
     response = client.get(url)
     assert response.status_code == 200
@@ -60,13 +60,13 @@ def test_result_redirects_if_no_game_played(client):
     url = reverse('result')
     response = client.get(url)
     
-    # -> hey should be redirected back to the game
+    # -> they should be redirected back to the game
     assert response.status_code == 302
     assert response.url == reverse('game')
 
 @pytest.mark.django_db
 def test_correct_guess_logic(client):
-    # Create a single movie for the test
+    # create a single movie for the test
     movie = Movie.objects.create(
         title="Inception",
         poster_url="http://example.com/poster.jpg",
@@ -97,3 +97,53 @@ def test_correct_guess_logic(client):
     updated_session = client.session
     assert updated_session["last_correct"] is True
     assert updated_session["score"] == 15
+
+@pytest.mark.django_db
+def test_incorrect_guess_logic(client):
+    # create movie for the test
+    movie = Movie.objects.create(
+        title="Matrix",
+        poster_url="http://example.com/matrix.jpg",
+        review_5="Pills", review_3="Ok", review_1="Bad"
+    )
+
+    # manually set session (round 1, attempt 1)
+    session = client.session
+    session["movie_ids"] = [movie.id]
+    session["round"] = 0
+    session["attempt"] = 1
+    session["score"] = 0
+    session["filter_styles"] = ["pixel"]
+    session.save()
+
+    # send POST request with wrong guess
+    url = reverse('game')
+    response = client.post(url, {
+        "guess": "Shrek", # wrong title!
+        "time_remaining": "20"
+    })
+
+    # -> redirect back to game to try again
+    assert response.status_code == 302
+    assert response.url == reverse('game')
+
+    # check if attempt increased to 2 and score stayed at 0
+    updated_session = client.session
+    assert updated_session["attempt"] == 2
+    assert updated_session["score"] == 0
+
+@pytest.mark.django_db
+def test_profile_stats_csv_download(client):
+    # user needs to be logged in for this
+    User.objects.create_user(username="test_user", password="password123")
+    client.login(username="test_user", password="password123")
+
+    # add ?download=csv to the url
+    url = reverse('profile_stats') + '?download=csv'
+    response = client.get(url)
+
+    assert response.status_code == 200
+
+    # check if it actually returns a CSV file (File I/O baby)
+    assert response['Content-Type'] == 'text/csv'
+    assert 'attachment; filename="my_latest_scores.csv"' in response['Content-Disposition']
