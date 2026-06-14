@@ -17,6 +17,8 @@ urlpatterns = [
         name="logout"
     ),
     path("profile/", views.profile_settings, name="profile"),
+    path("profile/stats/", views.profile_stats, name="profile_stats"),
+    path("leaderboard/", views.leaderboard, name="leaderboard"),
     path("", views.register, name="home"),
     path("game/", views.game, name="game"),
     path("result/", views.result, name="result"),

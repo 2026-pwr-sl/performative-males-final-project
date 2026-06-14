@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="View your Letterboxdle game statistics and performance chart.">
+    <meta name="keywords" content="stats, performance, scores, letterboxdle">
+    <title>My Stats - Letterboxdle</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js/dist/chart.umd.min.js"></script>
+    <style>
+        body {
+            background-color: #1a1a1a;
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 40px 20px;
+        }
+        .stats-panel {
+            background-color: #262626;
+            border: 1px solid #ffffff;
+            border-radius: 8px;
+            padding: 40px;
+            width: 100%;
+            max-width: 600px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            box-sizing: border-box;
+        }
+        .panel-title {
+            text-align: center;
+            margin-top: 0;
+        }
+        .stats-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .stat-box {
+            background-color: #333333;
+            padding: 15px;
+            border-radius: 6px;
+            text-align: center;
+            flex: 1;
+            margin: 0 10px;
+            border: 1px solid #555;
+        }
+        .stat-box h3 { margin: 0; font-size: 14px; color: #aaaaaa; }
+        .stat-box p { margin: 5px 0 0 0; font-size: 24px; font-weight: bold; }
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background-color: #e0e0e0;
+            color: #1a1a1a;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            margin-top: 20px;
+            box-sizing: border-box;
+        }
+        .btn:hover { background-color: #ffffff; }
+        .empty-state {
+            text-align: center; 
+            color: #aaaaaa; 
+            margin-top: 30px;
+        }
+        .back-link {
+            display: block; 
+            text-align: center; 
+            margin-top: 20px; 
+            color: #aaaaaa;
+        }
+        canvas { margin-top: 30px; }
+    </style>
+</head>
+<body>
+
+    <div class="stats-panel">
+        <h2 class="panel-title">Your Performance</h2>
+        
+        <div class="stats-header">
+            <div class="stat-box">
+                <h3>Total Runs</h3>
+                <p>{{ total_runs }}</p>
+            </div>
+            <div class="stat-box">
+                <h3>All-Time Best</h3>
+                <p>{{ best_score }}</p>
+            </div>
+        </div>
+
+        {% if has_data %}
+            <canvas id="scoreChart" width="400" height="250"></canvas>
+            <a href="{% url 'profile_stats' %}?download=csv" class="btn">Download Last 10 Scores (CSV)</a>
+        {% else %}
+            <p class="empty-state">
+                You haven't played any games yet. Start playing to see your chart!
+            </p>
+        {% endif %}
+
+        <a href="{% url 'profile' %}" class="back-link">Back to Profile</a>
+    </div>
+
+    {% if has_data %}
+    {{ labels|json_script:"chart-labels" }}
+    {{ scores|json_script:"chart-scores" }}
+
+    <script>
+        const chartLabels = JSON.parse(document.getElementById('chart-labels').textContent);
+        const chartScores = JSON.parse(document.getElementById('chart-scores').textContent);
+
+        const ctx = document.getElementById('scoreChart').getContext('2d');
+        const scoreChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: chartLabels,
+                datasets: [{
+                    label: 'Score Progression',
+                    data: chartScores,
+                    borderColor: '#ffffff',
+                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                    borderWidth: 2,
+                    pointBackgroundColor: '#ffffff',
+                    pointRadius: 4,
+                    fill: true,
+                    tension: 0.3
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: '#444444' },
+                        ticks: { color: '#aaaaaa' }
+                    },
+                    x: {
+                        grid: { color: '#444444' },
+                        ticks: { color: '#aaaaaa' }
+                    }
+                },
+                plugins: {
+                    legend: { 
+                        display: false 
+                    }
+                }
+            }
+        });
+    </script>
+    {% endif %}
+
+</body>
+</html>

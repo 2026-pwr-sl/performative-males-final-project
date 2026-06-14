@@ -13,6 +13,26 @@
             color: red;
             font-weight: bold;
         }
+        .action-buttons {
+            margin-bottom: 20px;
+        }
+        .btn-nav {
+            display: inline-block;
+            padding: 10px 20px;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .btn-stats {
+            background-color: #e0e0e0;
+            color: #1a1a1a;
+        }
+        .btn-leaderboard {
+            background-color: #e0e0e0;
+            color: #1a1a1a;
+            margin-left: 10px;
+        }
     </style>
 </head>
 <body>
@@ -21,6 +41,15 @@
     <img src="{{ user.profile.avatar.url }}" alt="Profile Picture" width="100" height="100" class="avatar-img">
     
     <p>Welcome, <strong>{{ user.username }}</strong>!</p>
+
+    <div class="action-buttons">
+        <a href="{% url 'profile_stats' %}" class="btn-nav btn-stats">
+            View My Game Stats
+        </a>
+        <a href="{% url 'leaderboard' %}" class="btn-nav btn-leaderboard">
+            View Leaderboard
+        </a>
+    </div>
 
     <hr>
 
