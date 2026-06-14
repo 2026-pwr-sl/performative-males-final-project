@@ -1,11 +1,11 @@
 import csv
-
 from random import sample, choice
 
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
+from django.db.models import Max, Count
 from django.http import JsonResponse, HttpResponse
 from .forms import UserUpdateForm, ProfileUpdateForm
 from .models import Movie, GameSession, Profile
@@ -89,7 +89,7 @@ def game(request):
         request.session["prev_movie"] = None
 
         # total time left
-        request.session["time_remaining"] = 30
+        request.session["time_remaining"] = 60
 
     movie_ids = request.session["movie_ids"]
     round_idx = request.session["round"]
@@ -129,9 +129,9 @@ def game(request):
             # 2nd attempt: 6 points
             # 3rd attempt: 2 points
             # TIME BONUS
-            # 1 point for every 5 seconds remaining (max 6 points)
+            # 1 point for every 10 seconds remaining (max 6 points)
             gained_score = 10 - (request.session["attempt"] - 1) * 4
-            gained_score += min(6, time_left // 5)
+            gained_score += min(6, time_left // 10)
 
             request.session["gained_score"] = gained_score
 
@@ -139,7 +139,7 @@ def game(request):
             request.session["round"] += 1
             request.session["attempt"] = 1
 
-            request.session["time_remaining"] = 30
+            request.session["time_remaining"] = 60
 
             return redirect("result")
 
@@ -150,7 +150,7 @@ def game(request):
                 request.session["round"] += 1
                 request.session["attempt"] = 1
 
-                request.session["time_remaining"] = 30
+                request.session["time_remaining"] = 60
 
                 return redirect("result")
 
@@ -171,7 +171,7 @@ def game(request):
         "round": round_idx + 1,
         "attempt": request.session["attempt"],
         "score": request.session["score"],
-        "time_remaining": request.session.get("time_remaining", 30),
+        "time_remaining": request.session.get("time_remaining", 60),
         "poster_url": blurred_image_url
         })
 
@@ -232,45 +232,221 @@ def finalize_game_session(request, score):
         request.session.pop(key, None)
 
 
+def game_endless(request):
+    # Autocomplete functionality
+    if request.method == "GET" and "q" in request.GET:
+        query = request.GET.get('q', '')
+        if query:
+            # Case-insensitive
+            movies = Movie.objects.exclude(poster_url='').filter(
+                title__icontains=query
+            ).values_list('title', flat=True)[:7]
+            return JsonResponse({'suggestions': list(movies)})
+        return JsonResponse({'suggestions': []})
+
+    if "attempt_endless" not in request.session:
+        request.session["attempt_endless"] = 0
+        request.session["streak_endless"] = 0
+
+    if request.session["attempt_endless"] == 0:
+        request.session["attempt_endless"] = 1
+        # movies = list(Movie.objects.values_list("id", flat=True))
+
+        # Excluded movies without poster
+        movies = list(
+            Movie.objects.exclude(poster_url='').values_list("id", flat=True)
+            )
+
+        # starting state for the game
+        request.session["movie_id_endless"] = choice(movies)
+        movie_id = request.session["movie_id_endless"]
+        request.session["filter_type_endless"] = choice(['blur', 'pixel'])
+
+        # total time left
+        request.session["time_remaining_endless"] = 60
+    else:
+        movie_id = request.session.get("movie_id_endless")
+
+    if not movie_id:
+        request.session["attempt_endless"] = 1
+        return redirect("game_endless")
+
+    movie = Movie.objects.get(id=movie_id)
+
+    # handle guess submission
+    if request.method == "POST":
+        guess = request.POST.get("guess", "").strip()
+
+        # update time left
+        time_left = int(request.POST.get("time_remaining", 0))
+        request.session["time_remaining_endless"] = time_left
+
+        # handle previous guess feedback
+        correct = guess.lower() == movie.title.lower()
+
+        request.session["gained_score_endless"] = 0
+        request.session["last_correct_endless"] = correct
+        request.session["last_movie_endless"] = movie.title
+        request.session["last_guess_endless"] = guess
+        request.session["last_poster_endless"] = movie.poster_url
+
+        if correct:
+            request.session["streak_endless"] += 1
+            request.session["attempt_endless"] = 0
+
+            request.session.pop("movie_id_endless", None)
+
+            return redirect("game_endless")
+
+        else:
+            request.session["attempt_endless"] += 1
+
+            if request.session["attempt_endless"] > 3 or time_left <= 0:
+                final_streak = request.session.get("streak_endless", 0)
+
+                finalize_endless(request, streak=final_streak)
+
+                return render(request, "game/game_over_endless.html", {
+                    "movie": movie,
+                    "streak": final_streak,
+                    "poster_url": movie.poster_url,
+                    })
+
+        return redirect("game_endless")
+
+    # Apply filter to the poster
+    current_attempt = request.session["attempt_endless"]
+    # Filter levels: 0-none, 1-low, 2-medium, 3-high
+    # Filter types: 'blur', 'pixel'
+    filter_level = 3 - (current_attempt - 1)  # we have 3 attemps max
+    filter_type = request.session.get("filter_type_endless", "blur")
+    blurred_image_url = get_blurred_poster(movie.poster_url, filter_level,
+                                           filter_type=filter_type)
+
+    return render(request, "game/game_endless.html", {
+        "movie": movie,
+        "streak": request.session.get("streak_endless", 0),
+        "attempt": current_attempt,
+        "time_remaining": request.session.get("time_remaining_endless", 60),
+        "poster_url": blurred_image_url
+        })
+
+
+def finalize_endless(request, streak):
+    if request.user.is_authenticated:
+        # Save current game session
+        GameSession.objects.create(
+            user=request.user, score=streak, endless_mode=True
+            )
+
+        # Update profile stats
+        profile = request.user.profile
+        profile.games_played += 1
+        if streak > profile.longest_streak:
+            profile.longest_streak = streak
+        profile.save()
+
+    # Clear game-related session variables
+    game_keys = [
+            "movie_id_endless",
+            "filter_type_endless",
+            "streak_endless",
+            "attempt_endless",
+            "time_remaining_endless",
+            "last_movie_endless",
+            "last_guess_endless",
+            "last_correct_endless",
+            "last_poster_endless",
+            "gained_score_endless"
+        ]
+    for key in game_keys:
+        request.session.pop(key, None)
+
+
 @login_required
 def profile_stats(request):
     try:
         # Fetch the 10 most recent games
-        recent_games_qs = (
+        classic_games_qs = (
             GameSession.objects
-            .filter(user=request.user)
+            .filter(user=request.user, endless_mode=False)
             .order_by('-date_played')[:10]
-            )
+        )
+        classic_games = list(classic_games_qs)[::-1]
+
+        endless_games_qs = (
+            GameSession.objects
+            .filter(user=request.user, endless_mode=True)
+            .order_by('-date_played')[:10]
+        )
+        endless_games = list(endless_games_qs)[::-1]
         # Reverse to chronological order
-        recent_games = list(recent_games_qs)[::-1]
 
         # Handle CSV Download
         if request.GET.get('download') == 'csv':
+            mode = request.GET.get('mode', 'classic')
             response = HttpResponse(content_type='text/csv')
             response['Content-Disposition'] = (
-                'attachment; filename="my_latest_scores.csv"'
+                f'attachment; filename="my_latest_{mode}_scores.csv"'
                 )
 
             writer = csv.writer(response)
-            writer.writerow(['Playthrough', 'Score', 'Date Played'])
+            writer.writerow([
+                'Playthrough', 'Score', 'Game Mode', 'Date Played'
+                ])
 
-            for index, game in enumerate(recent_games, start=1):
-                writer.writerow([index,
-                                 game.score,
-                                 game.date_played.strftime('%Y-%m-%d %H:%M')])
+            if mode == 'endless':
+                export_games = endless_games
+            else:
+                export_games = classic_games
+
+            for index, game in enumerate(export_games, start=1):
+                writer.writerow([
+                    index,
+                    game.score,
+                    "Endless" if game.endless_mode else "Classic",
+                    game.date_played.strftime('%Y-%m-%d %H:%M')
+                ])
 
             return response
 
         # Prepare Data for Chart.js
-        scores = [game.score for game in recent_games]
-        labels = [f"Game {i+1}" for i in range(len(scores))]
+
+        classic_stats = (
+            GameSession.objects
+            .filter(user=request.user, endless_mode=False)
+            .aggregate(total=Count('id'), best=Max('score'))
+        )
+        classic_total = classic_stats['total'] or 0
+        classic_best = classic_stats['best'] or 0
+
+        endless_stats = (
+            GameSession.objects
+            .filter(user=request.user, endless_mode=True)
+            .aggregate(total=Count('id'), best=Max('score'))
+        )
+        endless_total = endless_stats['total'] or 0
+        endless_best = endless_stats['best'] or 0
+
+        classic_scores = [game.score for game in classic_games]
+        classic_labels = [f"Game {i+1}" for i in range(len(classic_scores))]
+
+        endless_scores = [game.score for game in endless_games]
+        endless_labels = [f"Game {i+1}" for i in range(len(endless_scores))]
 
         context = {
-            "scores": scores,
-            "labels": labels,
-            "total_runs": request.user.profile.games_played,
+            "classic_scores": classic_scores,
+            "classic_labels": classic_labels,
+            "endless_scores": endless_scores,
+            "endless_labels": endless_labels,
+            "classic_total": classic_total,
+            "classic_best": classic_best,
+            "endless_total": endless_total,
+            "endless_best": endless_best,
             "best_score": request.user.profile.high_score,
-            "has_data": len(scores) > 0
+            "has_classic_data": len(classic_scores) > 0,
+            "has_endless_data": len(endless_scores) > 0,
+            "has_data": (len(classic_scores) > 0 or len(endless_scores) > 0)
         }
         return render(request, "game/stats.html", context)
 

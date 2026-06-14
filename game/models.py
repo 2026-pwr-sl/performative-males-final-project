@@ -42,6 +42,7 @@ class GameSession(models.Model):
                              related_name="game_sessions")
     score = models.IntegerField()
     date_played = models.DateTimeField(auto_now_add=True)
+    endless_mode = models.BooleanField(default=False)
 
     class Meta:
         ordering = ['-date_played']  # Newewst always first
