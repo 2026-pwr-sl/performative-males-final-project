@@ -232,6 +232,137 @@ def finalize_game_session(request, score):
         request.session.pop(key, None)
 
 
+def game_endless(request):
+    # Autocomplete functionality
+    if request.method == "GET" and "q" in request.GET:
+        query = request.GET.get('q', '')
+        if query:
+            # Case-insensitive
+            movies = Movie.objects.exclude(poster_url='').filter(
+                title__icontains=query
+            ).values_list('title', flat=True)[:7]
+            return JsonResponse({'suggestions': list(movies)})
+        return JsonResponse({'suggestions': []})
+
+    if "attempt_endless" not in request.session:
+        request.session["attempt_endless"] = 0
+        request.session["streak_endless"] = 0
+
+    if request.session["attempt_endless"] == 0:
+        request.session["attempt_endless"] = 1
+        # movies = list(Movie.objects.values_list("id", flat=True))
+
+        # Excluded movies without poster
+        movies = list(
+            Movie.objects.exclude(poster_url='').values_list("id", flat=True)
+            )
+
+        # starting state for the game
+        request.session["movie_id_endless"] = choice(movies)
+        movie_id = request.session["movie_id_endless"]
+        request.session["filter_type_endless"] = choice(['blur', 'pixel'])
+
+        # total time left
+        request.session["time_remaining_endless"] = 30
+    else:
+        movie_id = request.session.get("movie_id_endless")
+
+    if not movie_id:
+        request.session["attempt_endless"] = 1
+        return redirect("game_endless")
+
+    movie = Movie.objects.get(id=movie_id)
+
+    # handle guess submission
+    if request.method == "POST":
+        guess = request.POST.get("guess", "").strip()
+
+        # update time left
+        time_left = int(request.POST.get("time_remaining", 0))
+        request.session["time_remaining_endless"] = time_left
+
+        # handle previous guess feedback
+        correct = guess.lower() == movie.title.lower()
+
+        request.session["gained_score_endless"] = 0
+        request.session["last_correct_endless"] = correct
+        request.session["last_movie_endless"] = movie.title
+        request.session["last_guess_endless"] = guess
+        request.session["last_poster_endless"] = movie.poster_url
+
+        if correct:
+            request.session["streak_endless"] += 1
+            request.session["attempt_endless"] = 0
+
+            request.session.pop("movie_id_endless", None)
+
+            return redirect("game_endless")
+
+        else:
+            request.session["attempt_endless"] += 1
+
+            if request.session["attempt_endless"] > 3 or time_left <= 0:
+                final_streak = request.session.get("streak_endless", 0)
+
+                finalize_endless(request, streak=final_streak)
+
+                return render(request, "game/game_over_endless.html", {
+                    "movie": movie,
+                    "streak": final_streak,
+                    "poster_url": movie.poster_url,
+                    })
+
+        return redirect("game_endless")
+
+    # Apply filter to the poster
+    current_attempt = request.session["attempt_endless"]
+    # Filter levels: 0-none, 1-low, 2-medium, 3-high
+    # Filter types: 'blur', 'pixel'
+    filter_level = 3 - (current_attempt - 1)  # we have 3 attemps max
+    filter_type = request.session.get("filter_type_endless", "blur")
+    blurred_image_url = get_blurred_poster(movie.poster_url, filter_level,
+                                           filter_type=filter_type)
+
+    return render(request, "game/game_endless.html", {
+        "movie": movie,
+        "streak": request.session.get("streak_endless", 0),
+        "attempt": current_attempt,
+        "time_remaining": request.session.get("time_remaining_endless", 30),
+        "poster_url": blurred_image_url
+        })
+
+
+def finalize_endless(request, streak):
+    if request.user.is_authenticated:
+        # Save current game session
+        GameSession.objects.create(
+            user=request.user, score=streak, endless_mode=True
+            )
+
+        # Update profile stats
+        profile = request.user.profile
+        profile.games_played += 1
+        if streak > profile.longest_streak:
+            profile.longest_streak = streak
+        profile.save()
+
+    # Clear game-related session variables
+    game_keys = [
+            "movie_id_endless",
+            "filter_type_endless",
+            "streak_endless",
+            "attempt_endless",
+            "time_remaining_endless",
+            "last_movie_endless",
+            "last_guess_endless",
+            "last_correct_endless",
+            "last_poster_endless",
+            "gained_score_endless"
+        ]
+    for key in game_keys:
+        request.session.pop(key, None)
+
+
 @login_required
 def profile_stats(request):
     try:

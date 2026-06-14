@@ -23,6 +23,7 @@ urlpatterns = [
     path("", views.register, name="home"),
     path("game/", views.game, name="game"),
     path("result/", views.result, name="result"),
+    path("game_endless/", views.game_endless, name="game_endless"),
 
     path("error-test/", lambda request: render(
         request,

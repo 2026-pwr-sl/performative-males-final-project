@@ -1,8 +1,8 @@
-{% extends 'base.html' %} {% load static %} {% block title %}Movie {{ round
-}}/10 - Letterboxdle{% endblock %} {% block content_container %}
+{% extends 'base.html' %} {% load static %} {% block title %}Endless -
+Letterboxdle{% endblock %} {% block content_container %}
 <div class="game-split-wrapper">
   <div class="game-main-box">
-    <h1>Movie {{ round }}/10</h1>
+    <h1>Endless Mode</h1>
 
     <div class="reviews-wrapper">
       <div class="review-box">
@@ -27,7 +27,7 @@
     <form
       method="post"
       id="guess-form"
-      data-autocomplete-url="{% url 'game' %}"
+      data-autocomplete-url="{% url 'game_endless' %}"
     >
       {% csrf_token %}
       <div class="autocomplete-wrapper autocomplete-space">
@@ -52,7 +52,7 @@
 
     <div class="game-stats">
       <span>Attempt: {{ attempt }}/3</span>
-      <span>Score: {{ score }}</span>
+      <span>Streak: {{ streak }}</span>
     </div>
   </div>
 
@@ -80,7 +80,6 @@
     width: 100%;
   }
 
-  /* left box */
   .game-main-box {
     background-color: #1c1c1e;
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -94,7 +93,6 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   }
 
-  /* right box */
   .game-poster-box {
     background-color: #1c1c1e;
     border: 1px solid rgba(255, 255, 255, 0.1);

@@ -1,0 +1,183 @@
+{% extends 'base.html' %} {% load static %} {% block title %}Endless result -
+Letterboxdle{% endblock %} {% block extra_css %}
+<style>
+  .result-layout {
+    display: flex;
+    flex-direction: row;
+    gap: 40px;
+    align-items: center;
+    text-align: left;
+  }
+
+  .result-content-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .game-over-title {
+    color: #ff4757;
+    margin: 0;
+    font-size: 2.5rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .wrong-answer-text {
+    margin: 0;
+    font-size: 1.1rem;
+    opacity: 0.9;
+  }
+
+  .wrong-answer-strike {
+    text-decoration: line-through;
+    color: #ff4757;
+    font-weight: bold;
+  }
+
+  .movie-title {
+    font-size: 1.3rem;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 12px 16px;
+    border-radius: 6px;
+    border-left: 4px solid #ff4757;
+  }
+
+  /* Styl dla licznika serii (Streak) */
+  .streak-container {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255, 165, 2, 0.1);
+    border: 1px solid rgba(255, 165, 2, 0.3);
+    padding: 10px 20px;
+    border-radius: 50px;
+    width: fit-content;
+  }
+
+  .streak-text {
+    font-size: 1.3rem;
+    margin: 0;
+  }
+
+  .score-highlight {
+    color: #ffa502;
+    font-size: 1.6rem;
+    font-weight: bold;
+  }
+
+  .fire-emoji {
+    font-size: 1.8rem;
+    animation: flicker 1.5s infinite alternate;
+  }
+
+  @keyframes flicker {
+    0% {
+      transform: scale(1);
+      filter: drop-shadow(0 0 2px #ffa502);
+    }
+    100% {
+      transform: scale(1.1);
+      filter: drop-shadow(0 0 8px #ff7f50);
+    }
+  }
+
+  .result-poster-area {
+    flex-shrink: 0;
+  }
+
+  .result-poster {
+    max-width: 100%;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+    display: block;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .result-content-area .action-btn {
+    width: 100%;
+    background-color: #2ed573;
+    color: white;
+    padding: 14px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition:
+      background 0.2s ease,
+      transform 0.1s ease;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  .result-content-area .action-btn:hover {
+    background-color: #26af5f;
+  }
+
+  .result-content-area .action-btn:active {
+    transform: scale(0.98);
+  }
+
+  @media (max-width: 768px) {
+    .result-layout {
+      flex-direction: column-reverse;
+      align-items: center;
+      gap: 24px;
+      text-align: center;
+    }
+    .movie-title {
+      border-left: none;
+      border-top: 4px solid #ff4757;
+    }
+    .streak-container {
+      margin: 0 auto;
+    }
+    .result-poster {
+      max-width: 220px;
+    }
+  }
+</style>
+{% endblock %} {% block content_container %}
+<div class="login-panel wide-panel">
+  <div class="result-layout">
+    <div class="result-content-area">
+      <h1 class="game-over-title">Game Over</h1>
+
+      {% if guess %}
+      <p class="wrong-answer-text">
+        Your last guess: <span class="wrong-answer-strike">{{ guess }}</span>
+      </p>
+      {% endif %}
+
+      <div class="movie-title">
+        The correct movie was: <strong>{{ movie.title }}</strong>
+      </div>
+
+      <div class="streak-container">
+        <span class="fire-emoji">🔥</span>
+        <p class="streak-text">
+          Final Streak: <span class="score-highlight">{{ streak }}</span>
+        </p>
+      </div>
+
+      <a href="{% url 'game_endless' %}" class="action-btn">Play Again</a>
+    </div>
+
+    <div class="result-poster-area">
+      <div class="poster-wrapper">
+        <img
+          src="{{ poster_url }}"
+          width="300"
+          height="450"
+          alt="Correct movie poster"
+          class="result-poster"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

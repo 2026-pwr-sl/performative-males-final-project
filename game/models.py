@@ -31,7 +31,6 @@ class Profile(models.Model):
 
     # for endless mode could be deleted if we decide not to use this
     longest_streak = models.IntegerField(default=0)
-    current_streak = models.IntegerField(default=0)
 
     def __str__(self):
         return f"{self.user.username}'s Profile"
@@ -42,6 +41,7 @@ class GameSession(models.Model):
                              related_name="game_sessions")
     score = models.IntegerField()
     date_played = models.DateTimeField(auto_now_add=True)
+    endless_mode = models.BooleanField(default=False)
 
     class Meta:
         ordering = ['-date_played']  # Newewst always first
