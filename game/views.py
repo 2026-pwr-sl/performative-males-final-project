@@ -457,6 +457,7 @@ def profile_stats(request):
             {"message": f"Could not load stats: {str(e)}"}
             )
 
+
 def leaderboard(request):
     try:
         # Fetch top 10 profiles with the highest high_score
