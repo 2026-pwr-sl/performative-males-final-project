@@ -40,7 +40,7 @@ def profile_settings(request):
             if u_form.is_valid() and p_form.is_valid():
                 u_form.save()
                 p_form.save()
-                return redirect("profile")
+                return redirect("profile_settings")
 
         elif "delete_account" in request.POST:
             user = request.user
@@ -478,3 +478,6 @@ def leaderboard(request):
             "game/error.html",
             {"message": f"Could not load leaderboard: {str(e)}"}
             )
+@login_required
+def home(request):
+    return render(request, "game/home.html")

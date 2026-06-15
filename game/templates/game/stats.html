@@ -169,7 +169,7 @@
       </div>
     </div>
 
-    <a href="{% url 'profile' %}" class="back-link">Back to Profile</a>
+    <a href="{% url 'home' %}" class="btn-back">← Back to Home</a>
 
     {% if has_data %} {{classic_labels|json_script:"classic-labels"}}
     {{classic_scores|json_script:"classic-scores"}}
