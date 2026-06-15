@@ -57,7 +57,7 @@ def test_game_initialization(client):
     assert session["round"] == 0
     assert session["score"] == 0
     assert session["attempt"] == 1
-    assert session["time_remaining"] == 30
+    assert session["time_remaining"] == 60
 
 
 @pytest.mark.django_db
@@ -93,7 +93,7 @@ def test_correct_guess_logic(client):
     url = reverse('game')
     response = client.post(url, {
         "guess": "Inception",
-        "time_remaining": "25"
+        "time_remaining": "50"
     })
 
     # should redirect to result page
@@ -155,5 +155,5 @@ def test_profile_stats_csv_download(client):
 
     # check if it actually returns a CSV file (File I/O baby)
     assert response['Content-Type'] == 'text/csv'
-    expected_disp = 'attachment; filename="my_latest_scores.csv"'
+    expected_disp = 'attachment; filename="my_latest_classic_scores.csv"'
     assert expected_disp in response['Content-Disposition']
