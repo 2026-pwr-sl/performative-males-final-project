@@ -68,4 +68,12 @@ Letterboxdle{% endblock %} {% block extra_css %}
 
   container.innerHTML = `${starHtml} <strong class="rating-number-score">(${starsAmount.toFixed(1)})</strong>`;
 </script>
+
+<form method="get" action="{% url 'game' %}" class="game-over-form">
+  <button type="submit" class="submit-btn">Play again</button>
+</form>
+
+<div class="back-link-container" style="text-align: center; margin-top: 15px;">
+    <a href="{% url 'home' %}" class="btn-back">← Back to Home</a>
+</div>
 {% endblock %}
