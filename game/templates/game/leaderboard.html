@@ -1,132 +1,143 @@
-<!DOCTYPE html>
+{% load static %}
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="description" content="View the global top 10 leaderboard for Letterboxdle.">
-    <meta name="keywords" content="leaderboard, top players, high scores, letterboxdle">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="description"
+      content="View the global top 10 leaderboard for Letterboxdle."
+    />
+    <meta
+      name="keywords"
+      content="leaderboard, top players, high scores, letterboxdle"
+    />
     <title>Global Leaderboard - Letterboxdle</title>
+    <link rel="stylesheet" href="{% static 'css/main.css' %}" />
     <style>
-        body {
-            background-color: #1a1a1a;
-            color: #ffffff;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 40px 20px;
-        }
-        .leaderboard-panel {
-            background-color: #262626;
-            border: 1px solid #ffffff;
-            border-radius: 8px;
-            padding: 40px;
-            width: 100%;
-            max-width: 500px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-            box-sizing: border-box;
-        }
-        h2 {
-            text-align: center;
-            margin-top: 0;
-            margin-bottom: 30px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-        }
-        th, td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #444444;
-        }
-        th {
-            color: #aaaaaa;
-            font-weight: 500;
-            font-size: 14px;
-        }
-        td {
-            font-size: 16px;
-        }
-        .rank {
-            font-weight: bold;
-            width: 50px;
-        }
-        .rank-1 { color: #ffd700; }
-        .rank-2 { color: #c0c0c0; }
-        .rank-3 { color: #cd7f32; }
-        
-        .score {
-            text-align: right;
-            font-weight: bold;
-        }
-        .btn {
-            display: block;
-            width: 100%;
-            padding: 12px;
-            background-color: #e0e0e0;
-            color: #1a1a1a;
-            border: none;
-            border-radius: 6px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            text-align: center;
-            text-decoration: none;
-            box-sizing: border-box;
-            margin-top: 25px;
-        }
-        .btn:hover {
-            background-color: #ffffff;
-        }
-        .empty-row {
-            text-align: center;
-            color: #aaaaaa;
-            padding: 30px 0;
-        }
+      body {
+        background-color: #1a1a1a;
+        color: #ffffff;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-height: 100vh;
+        margin: 0;
+        padding: 40px 20px;
+      }
+      .leaderboard-panel {
+        background-color: #262626;
+        border: 1px solid #ffffff;
+        border-radius: 8px;
+        padding: 40px;
+        width: 100%;
+        max-width: 500px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+        box-sizing: border-box;
+      }
+      h2 {
+        text-align: center;
+        margin-top: 0;
+        margin-bottom: 30px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+      }
+      th,
+      td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #444444;
+      }
+      th {
+        color: #aaaaaa;
+        font-weight: 500;
+        font-size: 14px;
+      }
+      td {
+        font-size: 16px;
+      }
+      .rank {
+        font-weight: bold;
+        width: 50px;
+      }
+      .rank-1 {
+        color: #ffd700;
+      }
+      .rank-2 {
+        color: #c0c0c0;
+      }
+      .rank-3 {
+        color: #cd7f32;
+      }
+
+      .score {
+        text-align: right;
+        font-weight: bold;
+      }
+      .btn {
+        display: block;
+        width: 100%;
+        padding: 12px;
+        background-color: #e0e0e0;
+        color: #1a1a1a;
+        border: none;
+        border-radius: 6px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        text-align: center;
+        text-decoration: none;
+        box-sizing: border-box;
+        margin-top: 25px;
+      }
+      .btn:hover {
+        background-color: #ffffff;
+      }
+      .empty-row {
+        text-align: center;
+        color: #aaaaaa;
+        padding: 30px 0;
+      }
     </style>
-</head>
-<body>
-
+  </head>
+  <body>
     <div class="leaderboard-panel">
-        <h2>🏆 Global Leaderboard</h2>
-        
-        <table>
-            <thead>
-                <tr>
-                    <th class="rank">Rank</th>
-                    <th>Player</th>
-                    <th class="score">High Score</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for player_profile in top_players %}
-                    <tr>
-                        <td class="rank rank-{{ forloop.counter }}">
-                            #{{ forloop.counter }}
-                        </td>
-                        <td>
-                            <strong>{{ player_profile.user.username }}</strong>
-                        </td>
-                        <td class="score">
-                            {{ player_profile.high_score }}
-                        </td>
-                    </tr>
-                {% empty %}
-                    <tr>
-                        <td colspan="3" class="empty-row">
-                            No scores recorded yet. Be the first!
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+      <h2>🏆 Global Leaderboard</h2>
 
-        <a href="{% url 'game' %}" class="btn">Play Game</a>
-        <a href="{% url 'home' %}" class="btn-back">← Back to Home</a>
+      <table>
+        <thead>
+          <tr>
+            <th class="rank">Rank</th>
+            <th>Player</th>
+            <th class="score">High Score</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for player_profile in top_players %}
+          <tr>
+            <td class="rank rank-{{ forloop.counter }}">
+              #{{ forloop.counter }}
+            </td>
+            <td>
+              <strong>{{ player_profile.user.username }}</strong>
+            </td>
+            <td class="score">{{ player_profile.high_score }}</td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="3" class="empty-row">
+              No scores recorded yet. Be the first!
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <a href="{% url 'game' %}" class="btn">Play Game</a>
+      <a href="{% url 'home' %}" class="btn-back">← Back to Home</a>
     </div>
-
-</body>
+  </body>
 </html>
