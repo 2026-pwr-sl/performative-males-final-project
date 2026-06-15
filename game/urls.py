@@ -14,13 +14,14 @@ urlpatterns = [
     ),
     path(
         "logout/",
-        auth_views.LogoutView.as_view(next_page="login"),
+        auth_views.LogoutView.as_view(next_page="register"),
         name="logout"
     ),
     path("profile/settings/", views.profile_settings, name="profile_settings"),
     path("profile/stats/", views.profile_stats, name="profile_stats"),
     path("leaderboard/", views.leaderboard, name="leaderboard"),
-    path("", views.register, name="home"),
+    path("", views.index, name="index"),           #  (Main page address)
+    path("home/", views.home, name="home"),
     path("game/", views.game, name="game"),
     path("result/", views.result, name="result"),
     path("game_endless/", views.game_endless, name="game_endless"),

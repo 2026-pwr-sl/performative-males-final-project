@@ -128,3 +128,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Ustawiamy przekierowanie logowania raz a dobrze (Setting the login redirect once and for all)
 LOGIN_REDIRECT_URL = "home"
+
+LOGIN_URL = "login"

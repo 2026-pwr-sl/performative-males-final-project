@@ -478,6 +478,15 @@ def leaderboard(request):
             "game/error.html",
             {"message": f"Could not load leaderboard: {str(e)}"}
             )
+    
+    
 @login_required
 def home(request):
     return render(request, "game/home.html")
+
+
+def index(request):
+    """Inteligentne przekierowanie na start (Smart redirect on start)"""
+    if request.user.is_authenticated:
+        return redirect("home")
+    return redirect("register")
