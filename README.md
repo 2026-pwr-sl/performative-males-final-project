@@ -19,15 +19,15 @@ The user can create an account and login to it. The benefit of setting up an acc
 
 ### Main Gameplay:
 
-<img width="949" height="440" alt="image" src="https://github.com/user-attachments/assets/9db77a37-b2ff-4e7f-ac6f-c196278c5a3e" />
-<img width="944" height="435" alt="image" src="https://github.com/user-attachments/assets/f6cf4c8f-21ad-4050-89a4-81f224265330" />
-<img width="956" height="439" alt="image" src="https://github.com/user-attachments/assets/1b69df12-9101-44af-a938-53f0df35dc69" />
+<img width="1861" height="946" alt="image" src="https://github.com/user-attachments/assets/82b7fb56-1503-410f-9e6f-df3e83452e64" />
+<img width="1862" height="942" alt="image" src="https://github.com/user-attachments/assets/3ea66624-b8b5-465e-9434-4852be8a80e0" />
+<img width="1853" height="938" alt="image" src="https://github.com/user-attachments/assets/905cf804-2c41-44c3-a2cd-c75e4d940262" />
 
 ### End of game:
 
-<img width="958" height="440" alt="image" src="https://github.com/user-attachments/assets/a0df7695-9e53-4761-900b-e6227be1a61f" />
+<img width="1851" height="940" alt="image" src="https://github.com/user-attachments/assets/d30c1a82-2083-42ba-9299-a2218c58c9d2" />
 
-
+### Register and login:
 
 <img width="948" height="437" alt="image" src="https://github.com/user-attachments/assets/bfb00f6a-0688-4b82-a704-48a6b17881be" />
 <img width="943" height="433" alt="image" src="https://github.com/user-attachments/assets/05471993-e7b2-4379-8fc4-ee953b4d3da4" />
