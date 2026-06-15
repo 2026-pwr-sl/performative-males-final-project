@@ -1,5 +1,4 @@
-{% extends 'base.html' %} {% load static %} {% block title %}Endless result -
-Letterboxdle{% endblock %} {% block extra_css %}
+{% extends 'base.html' %} {% load static %} {% block title %}Endless result - Letterboxdle{% endblock %} {% block extra_css %}
 <style>
   .result-layout {
     display: flex;
@@ -165,8 +164,12 @@ Letterboxdle{% endblock %} {% block extra_css %}
       </div>
 
       <a href="{% url 'game_endless' %}" class="action-btn">Play Again</a>
-    </div>
+      
+      <div class="back-link-container">
+          <a href="{% url 'home' %}" class="btn-back">← Back to Home</a>
+      </div>
 
+    </div>
     <div class="result-poster-area">
       <div class="poster-wrapper">
         <img
