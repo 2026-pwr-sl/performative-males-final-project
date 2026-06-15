@@ -190,7 +190,7 @@ class Command(BaseCommand):
                     success_msg = f"Added: {data['real_title']}"
                     self.stdout.write(self.style.SUCCESS(success_msg))
 
-                if saved_count >= 50:
+                if saved_count >= 250:
                     break
 
         final_msg = f"\nSuccess, added: {saved_count} complete movies."
