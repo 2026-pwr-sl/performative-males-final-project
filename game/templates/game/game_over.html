@@ -1,5 +1,4 @@
-{% extends 'base.html' %} {% load static %} {% block title %}Game Over -
-Letterboxdle{% endblock %} {% block extra_css %}
+{% extends 'base.html' %} {% load static %} {% block title %}Game Over - Letterboxdle{% endblock %} {% block extra_css %}
 <style>
   .rating-section {
     font-size: 1.4rem;
@@ -48,6 +47,10 @@ Letterboxdle{% endblock %} {% block extra_css %}
 <form method="get" action="{% url 'game' %}" class="game-over-form">
   <button type="submit" class="submit-btn">Play again</button>
 </form>
+
+<div class="back-link-container">
+    <a href="{% url 'home' %}" class="btn-back">← Back to Home</a>
+</div>
 {% endblock %} {% block extra_js %}
 <script>
   const score = Number("{{ score }}") || 0;

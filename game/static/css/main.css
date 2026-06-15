@@ -276,3 +276,163 @@ body {
 .danger-title {
     color: #ff6b6b;
 }
+/* 
+   HOME PAGE SPECIFIC STYLES
+    */
+
+/* (Top navigation bar) */
+.navbar {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end; /*(Pushes avatar to the right) */
+    padding: 20px 40px;
+    box-sizing: border-box;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+/* (Dropdown container) */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+/*  (Dropdown menu appearance) */
+.dropdown-content {
+    display: none; /*(Hidden by default) */
+    position: absolute;
+    right: 0;
+    background-color: #262626;
+    min-width: 180px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.7);
+    z-index: 1;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #555555;
+    margin-top: 10px;
+}
+
+/* (Links and buttons in menu) */
+.dropdown-content a, 
+.dropdown-content form button {
+    color: white;
+    padding: 14px 16px;
+    text-decoration: none;
+    display: block;
+    text-align: left;
+    background: transparent;
+    border: none;
+    width: 100%;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: inherit;
+    border-bottom: 1px solid #333333;
+}
+
+/*  (Red logout button) */
+.dropdown-content form button {
+    color: #ff6b6b;
+    border-bottom: none;
+}
+
+/* (Hover on menu items) */
+.dropdown-content a:hover, 
+.dropdown-content form button:hover {
+    background-color: #444444;
+}
+
+/* (Show menu on hover over avatar) */
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.nav-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid #ffffff;
+    object-fit: cover;
+    transition: transform 0.2s ease;
+}
+
+.dropdown:hover .nav-avatar {
+    transform: scale(1.1);
+    border-color: #66b3ff;
+}
+
+/* (Central content) */
+.home-container {
+    text-align: center;
+    margin-top: 80px; /* (Makes space for navbar) */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.play-buttons {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin-top: 40px;
+    flex-wrap: wrap; /* (Wrap on smaller screens) */
+}
+
+/* (Main game buttons) */
+.btn-play {
+    padding: 20px 40px;
+    font-size: 22px;
+    border-radius: 12px;
+    background-color: #e0e0e0;
+    color: #1a1a1a;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: bold;
+    transition: all 0.2s ease;
+    min-width: 200px;
+}
+
+.btn-play-primary {
+    background-color: #66b3ff; /*  (Highlighted Standard button) */
+}
+
+.btn-play:hover {
+    transform: translateY(-5px);
+    background-color: #ffffff;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+}
+
+.btn-leaderboard-main {
+    margin-top: 50px;
+    display: inline-block;
+    padding: 15px 30px;
+    font-size: 18px;
+    background-color: #333333;
+    color: #ffffff;
+    border: 1px solid #555555;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    font-weight: bold;
+}
+
+.btn-leaderboard-main:hover {
+    background-color: #555555;
+    border-color: #ffffff;
+}
+
+.brand-logo-large {
+    margin-right: 30px;
+}
+
+.brand-text-large {
+    font-size: 64px;
+}
+
+.back-link-container {
+    text-align: center;
+    margin-top: 15px;
+}
