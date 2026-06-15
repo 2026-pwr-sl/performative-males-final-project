@@ -423,3 +423,16 @@ body {
     background-color: #555555;
     border-color: #ffffff;
 }
+
+.brand-logo-large {
+    margin-right: 30px;
+}
+
+.brand-text-large {
+    font-size: 64px;
+}
+
+.back-link-container {
+    text-align: center;
+    margin-top: 15px;
+}
