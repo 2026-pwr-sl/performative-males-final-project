@@ -15,7 +15,7 @@ The user can create an account and login to it. The benefit of setting up an acc
 
 ### Home page: 
 
-<img width="480" height="417" alt="tuffbatman" src="https://github.com/user-attachments/assets/5d433926-e633-4879-8c85-8694b5bd6dcb" /> (placeholder)
+<img width="960" height="504" alt="image" src="https://github.com/user-attachments/assets/94c6b008-dcd7-41b5-b639-4a137576fd03" />
 
 ### Main Gameplay:
 
