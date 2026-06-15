@@ -6,6 +6,10 @@ The project is a single player web-browser game, in which the player's goal is t
 - Attempt no 1: a 1 star review, and a lightly blurred image of the movie poster
 The time to succecsully guess the title is limited to sixty seconds! The system provides two gameplay modes: classic and endless.
 The user can create an account and login to it. The benefit of setting up an account is that you can see your statistics, and where you place on the leaderboard.
+### Database diagram ( generated with `dbdiagram.io`)
+
+<img width="812" height="586" alt="Untitled" src="https://github.com/user-attachments/assets/47d7b3c7-b092-4424-9107-9abcb1c27f4c" />
+
 
 ## Screenshots
 
