@@ -94,7 +94,7 @@ pytest
 ```
 
 ## Work division
-- Kamil Borkowski - main gameplay logic; endless mode gameplay logic; scoring system; frontend of the game view
+- Kamil Borkowski - main gameplay logic; endless mode gameplay logic; scoring system; frontend of the game view;
 - Borys Dąbrowski - autocomplete of answers; match history and leaderboard logic with frontend; image blurring utility;
 - Oliwier Krawczyk - setting up the skeleton of the project; creation of basic models; admin panel; addition of timer logic; setting up tests;
 - Timoteo Lema - fetching of movie data; frontend of login page, register page, home page, profile page;
