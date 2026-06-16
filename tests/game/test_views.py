@@ -17,7 +17,7 @@ def test_register_page_loads(client):
 @pytest.mark.django_db
 def test_profile_view_redirects_unauthenticated_user(client):
     # logged out user tries to enter profile
-    url = reverse('profile')
+    url = reverse('profile_settings')
     response = client.get(url)
 
     # kick him (code 302 - Redirect)
